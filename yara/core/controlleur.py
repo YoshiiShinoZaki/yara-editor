@@ -54,10 +54,36 @@ class Controlleur:
         self.setupEditActions()
         self.setupHelpActions()
 
-
         #Create our YaraHighlighter derived from QSyntaxHighlighter
         self.yaraEdit = self.ui_yaraeditor.yaraEdit
         highlighter = YaraHighlighter(self.yaraEdit.document())
+
+        self.yaraEdit.document().modificationChanged.connect(
+                self.actionSave.setEnabled)
+        self.yaraEdit.document().modificationChanged.connect(
+                self.mainwindow.setWindowModified)
+        self.yaraEdit.document().undoAvailable.connect(
+                self.actionUndo.setEnabled)
+        self.yaraEdit.document().redoAvailable.connect(
+                self.actionRedo.setEnabled)
+        self.mainwindow.setWindowModified(self.yaraEdit.document().isModified())
+        self.actionSave.setEnabled(self.yaraEdit.document().isModified())
+        self.actionUndo.setEnabled(self.yaraEdit.document().isUndoAvailable())
+        self.actionRedo.setEnabled(self.yaraEdit.document().isRedoAvailable())
+        self.actionUndo.triggered.connect(self.yaraEdit.undo)
+        self.actionRedo.triggered.connect(self.yaraEdit.redo)
+        self.actionCut.setEnabled(False)
+        self.actionCopy.setEnabled(False)
+        self.actionCut.triggered.connect(self.yaraEdit.cut)
+        self.actionCopy.triggered.connect(self.yaraEdit.copy)
+        self.actionPaste.triggered.connect(self.yaraEdit.paste)
+        self.yaraEdit.copyAvailable.connect(self.actionCut.setEnabled)
+        self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
+        QtGui.QApplication.clipboard().dataChanged.connect(
+                self.clipboardDataChanged)
+
+        if not self.load(fileName):
+            self.fileNew()
 
 
     def setupFileActions(self):
@@ -188,6 +214,10 @@ class Controlleur:
         QtGui.QMessageBox.about(self, "About", 
                 "Editor for Yara rules")
 
+    def clipboardDataChanged(self):
+        self.actionPaste.setEnabled(
+                len(QtGui.QApplication.clipboard().text()) != 0)
+
     def maybeSave(self):
         if not self.yaraEdit.document().isModified():
             return True
@@ -215,6 +245,7 @@ class Controlleur:
         else:
             shownName = QtCore.QFileInfo(fileName).fileName()
 
+        self.mainwindow.setWindowTitle(self.mainwindow.tr("%s[*] - %s" % (shownName, "Rich Text")))
         self.mainwindow.setWindowModified(False)
 
     def fileNew(self):
