@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Thu Nov 22 17:07:36 2012
+# Created: Thu Nov 22 18:49:49 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,9 @@ class Ui_YaraEditor(object):
     def setupUi(self, YaraEditor):
         YaraEditor.setObjectName(_fromUtf8("YaraEditor"))
         YaraEditor.resize(1117, 600)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/logo/images/logo.jpg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        YaraEditor.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(YaraEditor)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -53,38 +56,31 @@ class Ui_YaraEditor(object):
         self.menubar = QtGui.QMenuBar(YaraEditor)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1117, 25))
         self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menuFichier = QtGui.QMenu(self.menubar)
-        self.menuFichier.setObjectName(_fromUtf8("menuFichier"))
-        self.menu = QtGui.QMenu(self.menubar)
-        self.menu.setObjectName(_fromUtf8("menu"))
         YaraEditor.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(YaraEditor)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         YaraEditor.setStatusBar(self.statusbar)
         self.actionNouveau = QtGui.QAction(YaraEditor)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icon/images/win/filenew.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.actionNouveau.setIcon(icon1)
         self.actionNouveau.setObjectName(_fromUtf8("actionNouveau"))
-        self.actionQuitter = QtGui.QAction(YaraEditor)
-        self.actionQuitter.setObjectName(_fromUtf8("actionQuitter"))
+        self.actionExit = QtGui.QAction(YaraEditor)
+        self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.actionEnregistrer = QtGui.QAction(YaraEditor)
         self.actionEnregistrer.setObjectName(_fromUtf8("actionEnregistrer"))
-        self.menuFichier.addAction(self.actionNouveau)
-        self.menuFichier.addAction(self.actionEnregistrer)
-        self.menuFichier.addAction(self.actionQuitter)
-        self.menubar.addAction(self.menuFichier.menuAction())
-        self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(YaraEditor)
         QtCore.QMetaObject.connectSlotsByName(YaraEditor)
 
     def retranslateUi(self, YaraEditor):
-        YaraEditor.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        YaraEditor.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "Yara-Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("YaraEditor", "Appliquer sur la base", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuFichier.setTitle(QtGui.QApplication.translate("YaraEditor", "Fichier", None, QtGui.QApplication.UnicodeUTF8))
-        self.menu.setTitle(QtGui.QApplication.translate("YaraEditor", "?", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNouveau.setText(QtGui.QApplication.translate("YaraEditor", "Nouveau", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNouveau.setText(QtGui.QApplication.translate("YaraEditor", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNouveau.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionQuitter.setText(QtGui.QApplication.translate("YaraEditor", "Quitter", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionQuitter.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionEnregistrer.setText(QtGui.QApplication.translate("YaraEditor", "Enregistrer", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("YaraEditor", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEnregistrer.setText(QtGui.QApplication.translate("YaraEditor", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEnregistrer.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
 
+import yaraeditor_rc

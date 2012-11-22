@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Yara-Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../rsrc/yara-editor.qrc">
+    <normaloff>:/logo/images/logo.jpg</normaloff>:/logo/images/logo.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -85,34 +89,24 @@
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFichier">
-    <property name="title">
-     <string>Fichier</string>
-    </property>
-    <addaction name="actionNouveau"/>
-    <addaction name="actionEnregistrer"/>
-    <addaction name="actionQuitter"/>
-   </widget>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>?</string>
-    </property>
-   </widget>
-   <addaction name="menuFichier"/>
-   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNouveau">
+   <property name="icon">
+    <iconset>
+     <normalon>:/icon/images/win/filenew.png</normalon>
+    </iconset>
+   </property>
    <property name="text">
-    <string>Nouveau</string>
+    <string>New</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionQuitter">
+  <action name="actionExit">
    <property name="text">
-    <string>Quitter</string>
+    <string>Exit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -120,13 +114,15 @@
   </action>
   <action name="actionEnregistrer">
    <property name="text">
-    <string>Enregistrer</string>
+    <string>Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../rsrc/yaraeditor.qrc"/>
+ </resources>
  <connections/>
 </ui>

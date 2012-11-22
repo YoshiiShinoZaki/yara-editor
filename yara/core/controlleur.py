@@ -20,6 +20,7 @@ from PyQt4 import *
 from PyQt4.QtCore import (QObject, Qt, SIGNAL, SLOT)
 
 
+
 # Set the log configuration
 logging.basicConfig( \
                 filename=LOG_FILE, \
@@ -35,119 +36,275 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
+if sys.platform.startswith('darwin'):
+    rsrcPath = ":/images/mac"
+else:
+    rsrcPath = ":/images/win"
 
 class Controlleur:
     index=-1
-    def __init__(self,application,ui,mainwindow):
+    def __init__(self,application,ui,mainwindow,fileName=None):
 
         self.app = application
         self.ui_yaraeditor = ui
         self.mainwindow = mainwindow
 
+        mainwindow.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
+        self.setupFileActions()
+        self.setupEditActions()
+
+
         #Create our YaraHighlighter derived from QSyntaxHighlighter
-        yaraEdit = self.ui_yaraeditor.yaraEdit
-        highlighter = YaraHighlighter(yaraEdit.document())
-        
-        # Load Menu contextuel
-        self.ui_yaraeditor.treeYara.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.app.connect(self.ui_yaraeditor.treeYara, QtCore.SIGNAL("customContextMenuRequested(const QPoint &)"), self.load_menu_context)
-        self.app.connect(self.ui_yaraeditor.treeYara, QtCore.SIGNAL("itemSelectionChanged()"),self.change_text)
+        self.yaraEdit = self.ui_yaraeditor.yaraEdit
+        highlighter = YaraHighlighter(self.yaraEdit.document())
 
-        # File
-        self.app.connect(self.ui_yaraeditor.actionEnregistrer,SIGNAL("triggered()"),self.save_item)
-        
-        self.load_tree_yara()
-        
 
-    def action_add_item(self):
-        """
-        Add item
-        """
-        yara = add_yara(YARA_NAME_DEFAULT,YARA_CODE_DEFAULT)
-        if yara != None:
-            self.add_item_in_tree(yara)
+    def setupFileActions(self):
+        tb = QtGui.QToolBar(self.mainwindow)
+        tb.setWindowTitle("File Actions")
+        self.mainwindow.addToolBar(tb)
 
+        menu = QtGui.QMenu("&File", self.mainwindow)
+        self.mainwindow.menuBar().addMenu(menu)
+
+        self.actionNew = QtGui.QAction(
+                QtGui.QIcon.fromTheme('document-new',
+                        QtGui.QIcon(rsrcPath + '/filenew.png')),
+                "&New", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.New, triggered=self.fileNew)
+        tb.addAction(self.actionNew)
+        menu.addAction(self.actionNew)
+
+        self.actionOpen = QtGui.QAction(
+                QtGui.QIcon.fromTheme('document-open',
+                        QtGui.QIcon(rsrcPath + '/fileopen.png')),
+                "&Open...", self.mainwindow, shortcut=QtGui.QKeySequence.Open,
+                triggered=self.fileOpen)
+        tb.addAction(self.actionOpen)
+        menu.addAction(self.actionOpen)
+        menu.addSeparator()
+
+        self.actionSave = QtGui.QAction(
+                QtGui.QIcon.fromTheme('document-save',
+                        QtGui.QIcon(rsrcPath + '/filesave.png')),
+                "&Save", self.mainwindow, shortcut=QtGui.QKeySequence.Save,
+                triggered=self.fileSave, enabled=False)
+        tb.addAction(self.actionSave)
+        menu.addAction(self.actionSave)
+
+        self.actionSaveAs = QtGui.QAction("Save &As...", self.mainwindow,
+                priority=QtGui.QAction.LowPriority,
+                shortcut=QtCore.Qt.CTRL + QtCore.Qt.SHIFT + QtCore.Qt.Key_S,
+                triggered=self.fileSaveAs)
+        menu.addAction(self.actionSaveAs)
+        menu.addSeparator()
  
-    def action_del_item(self):
-        """
-        Add item
-        """   
-        tree = self.ui_yaraeditor.treeYara
-        item  = tree.currentItem()
-        yara = get_yara(_id=str(item.text(10)))[0]
-        self.del_item_in_tree(yara)
-        
-        
-    def add_item_in_tree(self,yara):
-        """
-        Add item
-        """   
-        tree = self.ui_yaraeditor.treeYara
-        item = QtGui.QTreeWidgetItem(tree)
-        item.setText(0,QtGui.QApplication.translate("MainWindow", yara._name, None, QtGui.QApplication.UnicodeUTF8))
-        item.setText(10,QtGui.QApplication.translate("MainWindow", str(yara.id), None, QtGui.QApplication.UnicodeUTF8))
-   
-    def del_item_in_tree(self,yara):
-        """
-        Delete this item recursively
-        """
-        tree = self.ui_yaraeditor.treeYara
-        item  = tree.currentItem()
-        tree.removeItemWidget(item,0)
-        del_yara(_id=yara.id)
-        tree.clear()
-        self.load_tree_yara()
-        
-    def change_text(self):
-        """
-        Set text on yara
-        """
-        item  = self.ui_yaraeditor.treeYara.currentItem()
-        yara = get_yara(_id=int(item.text(10)))[0]
-        self.set_text(yara._data)
+        self.actionPrint = QtGui.QAction(
+                QtGui.QIcon.fromTheme('document-print',
+                        QtGui.QIcon(rsrcPath + '/fileprint.png')),
+                "&Print...", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.Print, triggered=self.filePrint)
+        tb.addAction(self.actionPrint)
+        menu.addAction(self.actionPrint)
 
-    def set_text(self,text):
-        """
-        Set text on yara
-        """
-        yaraEdit = self.ui_yaraeditor.yaraEdit
-        
-        yaraEdit.setPlainText(text.replace(' { ','\n{ ').replace(' }',' }\n'))
+        self.actionPrintPreview = QtGui.QAction(
+                QtGui.QIcon.fromTheme('fileprint',
+                        QtGui.QIcon(rsrcPath + '/fileprint.png')),
+                "Print Preview...", self.mainwindow,
+                shortcut=QtCore.Qt.CTRL + QtCore.Qt.SHIFT + QtCore.Qt.Key_P,
+                triggered=self.filePrintPreview)
+        menu.addAction(self.actionPrintPreview)
 
-    def get_text(self):
-        """
-        Set text on yara
-        """
-        yaraEdit = self.ui_yaraeditor.yaraEdit
-        return str(yaraEdit.toPlainText())
+        self.actionPrintPdf = QtGui.QAction(
+                QtGui.QIcon.fromTheme('exportpdf',
+                        QtGui.QIcon(rsrcPath + '/exportpdf.png')),
+                "&Export PDF...", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_D,
+                triggered=self.filePrintPdf)
+        tb.addAction(self.actionPrintPdf)
+        menu.addAction(self.actionPrintPdf)
+        menu.addSeparator()
 
-    def load_menu_context(self, point):
+        self.actionQuit = QtGui.QAction("&Quit", self.mainwindow,
+                shortcut=QtGui.QKeySequence.Quit, triggered=self.mainwindow.close)
+        menu.addAction(self.actionQuit)
 
-        items = self.ui_yaraeditor.treeYara.selectedItems()
+    def setupEditActions(self):
+        tb = QtGui.QToolBar(self.mainwindow)
+        tb.setWindowTitle("Edit Actions")
+        self.mainwindow.addToolBar(tb)
 
-        # On définie le menu contextuel.
-        menu=QtGui.QMenu()
+        menu = QtGui.QMenu("&Edit", self.mainwindow)
+        self.mainwindow.menuBar().addMenu(menu)
 
-        action_del=menu.addAction("Delete yara file")
-        self.app.connect(action_del, QtCore.SIGNAL("triggered()"), self.action_del_item)
+        self.actionUndo = QtGui.QAction(
+                QtGui.QIcon.fromTheme('edit-undo',
+                        QtGui.QIcon(rsrcPath + '/editundo.png')),
+                "&Undo", self.mainwindow, shortcut=QtGui.QKeySequence.Undo)
+        tb.addAction(self.actionUndo)
+        menu.addAction(self.actionUndo)
 
-        action_add=menu.addAction("Add new yara")
-        self.app.connect(action_add, QtCore.SIGNAL("triggered()"), self.action_add_item)
+        self.actionRedo = QtGui.QAction(
+                QtGui.QIcon.fromTheme('edit-redo',
+                        QtGui.QIcon(rsrcPath + '/editredo.png')),
+                "&Redo", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.Redo)
+        tb.addAction(self.actionRedo)
+        menu.addAction(self.actionRedo)
+        menu.addSeparator()
 
+        self.actionCut = QtGui.QAction(
+                QtGui.QIcon.fromTheme('edit-cut',
+                        QtGui.QIcon(rsrcPath + '/editcut.png')),
+                "Cu&t", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.Cut)
+        tb.addAction(self.actionCut)
+        menu.addAction(self.actionCut)
 
-        # Il reste à lier chaque clic sur le menu à une action réelle via un SLOT.
-        menu.exec_(QtGui.QCursor.pos())
-        
-    def load_tree_yara(self):
-        """
-        """
-        self.ui_yaraeditor.treeYara.clear()
+        self.actionCopy = QtGui.QAction(
+                QtGui.QIcon.fromTheme('edit-copy',
+                        QtGui.QIcon(rsrcPath + '/editcopy.png')),
+                "&Copy", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.Copy)
+        tb.addAction(self.actionCopy)
+        menu.addAction(self.actionCopy)
 
-            
-    def save_item(self):
-        """
-        """
-        item  = self.ui_yaraeditor.treeYara.currentItem()
+        self.actionPaste = QtGui.QAction(
+                QtGui.QIcon.fromTheme('edit-paste',
+                        QtGui.QIcon(rsrcPath + '/editpaste.png')),
+                "&Paste", self.mainwindow, priority=QtGui.QAction.LowPriority,
+                shortcut=QtGui.QKeySequence.Paste,
+                enabled=(len(QtGui.QApplication.clipboard().text()) != 0))
+        tb.addAction(self.actionPaste)
+        menu.addAction(self.actionPaste)
+
+    def setupHelpActions(self):
+        helpMenu = QtGui.QMenu("Help", self.mainwindow)
+        helpMenu.addAction("About", self.about)
+        helpMenu.addAction("About &Qt", QtGui.qApp.aboutQt)        
+
+    def maybeSave(self):
+        if not self.yaraEdit.document().isModified():
+            return True
+
+        ret = QtGui.QMessageBox.warning(self.mainwindow, "Application",
+                "The document has been modified.\n"
+                "Do you want to save your changes?",
+                QtGui.QMessageBox.Save | QtGui.QMessageBox.Discard |
+                        QtGui.QMessageBox.Cancel)
+
+        if ret == QtGui.QMessageBox.Save:
+            return self.fileSave()
+
+        if ret == QtGui.QMessageBox.Cancel:
+            return False
+
+        return True
+
+    def setCurrentFileName(self, fileName=''):
+        self.fileName = fileName
+        self.yaraEdit.document().setModified(False)
+
+        if not fileName:
+            shownName = 'untitled.yara'
+        else:
+            shownName = QtCore.QFileInfo(fileName).fileName()
+
+        self.mainwindow.setWindowModified(False)
+
+    def fileNew(self):
+        if self.maybeSave():
+            self.yaraEdit.clear()
+            self.setCurrentFileName()
+
+    def fileOpen(self):
+        fn = QtGui.QFileDialog.getOpenFileName(self.mainwindow, "Open File...", "",
+                "Yara files (*.yara);;HTML-Files (*.htm *.html);;All Files (*)")
+
+        if fn:
+            self.load(fn)
+
+    def fileSave(self):
+        if not self.fileName:
+            return self.fileSaveAs()
+
+        writer = QtGui.QTextDocumentWriter(self.fileName)
+        success = writer.write(self.yaraEdit.document())
+        if success:
+            self.yaraEdit.document().setModified(False)
+
+        return success
+
+    def fileSaveAs(self):
+        fn = QtGui.QFileDialog.getSaveFileName(self.mainwindow, "Save as...", "",
+                "Yara files (*.yara);;HTML-Files (*.htm *.html);;All Files (*)")
+
+        if not fn:
+            return False
+
+        lfn = fn.lower()
+        if not lfn.endswith(('.yara', '.htm', '.html')):
+            # The default.
+            fn += '.yara'
+
+        self.setCurrentFileName(fn)
+        return self.fileSave()
+
+    def filePrint(self):
+        printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
+        dlg = QtGui.QPrintDialog(printer, self.mainwindow)
+
+        if self.yaraEdit.textCursor().hasSelection():
+            dlg.addEnabledOption(QtGui.QAbstractPrintDialog.PrintSelection)
+
+        dlg.setWindowTitle("Print Document")
+
+        if dlg.exec_() == QtGui.QDialog.Accepted:
+            self.yaraEdit.print_(printer)
+
+        del dlg
+
+    def filePrintPreview(self):
+        printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
+        preview = QtGui.QPrintPreviewDialog(printer, self.mainwindow)
+        preview.paintRequested.connect(self.printPreview)
+        preview.exec_()
+
+    def printPreview(self, printer):
+        self.yaraEdit.print_(printer)
+
+    def filePrintPdf(self):
+        fn = QtGui.QFileDialog.getSaveFileName(self.mainwindow, "Export PDF", None,
+                "PDF files (*.pdf);;All Files (*)")
+
+        if fn:
+            if QtCore.QFileInfo(fn).suffix().isEmpty():
+                fn += '.pdf'
+
+            printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
+            printer.setOutputFormat(QtGui.QPrinter.PdfFormat)
+            printer.setOutputFileName(fileName)
+            self.yaraEdit.document().print_(printer)
+
+    def load(self, f):
+        if not QtCore.QFile.exists(f):
+            return False
+
+        fh = QtCore.QFile(f)
+        if not fh.open(QtCore.QFile.ReadOnly):
+            return False
+
+        data = fh.readAll()
+        codec = QtCore.QTextCodec.codecForHtml(data)
+        unistr = codec.toUnicode(data)
+
+        if QtCore.Qt.mightBeRichText(unistr):
+            self.yaraEdit.setHtml(unistr)
+        else:
+            self.yaraEdit.setPlainText(unistr)
+
+        self.setCurrentFileName(f)
+        return True
 
 
 # vim:ts=4:expandtab:sw=4

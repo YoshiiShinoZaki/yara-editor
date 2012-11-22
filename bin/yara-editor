@@ -10,6 +10,7 @@
 
 import sip
 sip.setapi('QVariant', 2)
+sip.setapi('QString', 2)
 
 import sys,os
 import string
@@ -90,9 +91,11 @@ class app:
         self.ui.setupUi(self.win)
         self.win.show()
 
-        self.controlleur=Controlleur(application=self.app,
-            ui=self.ui,
-            mainwindow=self.win)
+        for fn in args or [None]:
+            self.controlleur=Controlleur(application=self.app,
+                ui=self.ui,
+                mainwindow=self.win,
+                fileName=fn)
 
         # Creation du file browser
         sys.exit(self.app.exec_())
