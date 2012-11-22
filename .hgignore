@@ -1,0 +1,10 @@
+syntax: glob
+*.pyc
+*.swp
+*~
+*.swo
+.\#*
+./build/*
+./test/
+uninstall.list
+*.qm
