@@ -52,6 +52,7 @@ class Controlleur:
         mainwindow.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         self.setupFileActions()
         self.setupEditActions()
+        self.setupHelpActions()
 
 
         #Create our YaraHighlighter derived from QSyntaxHighlighter
@@ -183,6 +184,10 @@ class Controlleur:
         helpMenu.addAction("About", self.about)
         helpMenu.addAction("About &Qt", QtGui.qApp.aboutQt)        
 
+    def about(self):
+        QtGui.QMessageBox.about(self, "About", 
+                "Editor for Yara rules")
+
     def maybeSave(self):
         if not self.yaraEdit.document().isModified():
             return True
@@ -305,6 +310,7 @@ class Controlleur:
 
         self.setCurrentFileName(f)
         return True
+
 
 
 # vim:ts=4:expandtab:sw=4
