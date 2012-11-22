@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Thu Nov 22 20:27:48 2012
+# Created: Thu Nov 22 23:11:22 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,6 +36,7 @@ class Ui_YaraEditor(object):
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.pathYara = QtGui.QLineEdit(self.widget_3)
+        self.pathYara.setReadOnly(False)
         self.pathYara.setObjectName(_fromUtf8("pathYara"))
         self.verticalLayout_2.addWidget(self.pathYara)
         self.yaraTree = QtGui.QTreeView(self.widget_3)
@@ -51,6 +52,7 @@ class Ui_YaraEditor(object):
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.pathMalware = QtGui.QLineEdit(self.widget_4)
+        self.pathMalware.setReadOnly(False)
         self.pathMalware.setObjectName(_fromUtf8("pathMalware"))
         self.verticalLayout_3.addWidget(self.pathMalware)
         self.malwareTree = QtGui.QTreeView(self.widget_4)
@@ -66,6 +68,7 @@ class Ui_YaraEditor(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.outputEdit = QtGui.QTextEdit(self.widget_2)
         self.outputEdit.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.outputEdit.setReadOnly(True)
         self.outputEdit.setObjectName(_fromUtf8("outputEdit"))
         self.horizontalLayout_2.addWidget(self.outputEdit)
         self.verticalLayout.addWidget(self.widget_2)

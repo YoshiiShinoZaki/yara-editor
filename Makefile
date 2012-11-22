@@ -16,7 +16,7 @@ clean: clean-pyc
 	-rm -rf build
 
 build:
-	$(MAKE) -C yara/ui
+	$(MAKE) -C yaraeditor/ui
 
 
 

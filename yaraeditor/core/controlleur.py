@@ -8,13 +8,13 @@
 """
 
 
-import os, sys
+
 import string
 import pickle
 import logging
-
-from yara.constante import *
-from yara.core.highlighter import *
+import sys, os, traceback
+from yaraeditor.constante import *
+from yaraeditor.core.highlighter import *
 
 from PyQt4 import *
 from PyQt4.QtCore import (QObject, Qt, SIGNAL, SLOT)
@@ -60,6 +60,8 @@ class Controlleur:
         self.yaraTree = self.ui_yaraeditor.yaraTree
         self.malwareTree = self.ui_yaraeditor.malwareTree
         self.outputEdit = self.ui_yaraeditor.outputEdit
+        self.pathYaraEdit = self.ui_yaraeditor.pathYara
+        self.pathMalwareEdit = self.ui_yaraeditor.pathMalware
 
         #Create our YaraHighlighter derived from QSyntaxHighlighter
         self.yaraEdit = self.ui_yaraeditor.yaraEdit
@@ -89,26 +91,39 @@ class Controlleur:
         QtGui.QApplication.clipboard().dataChanged.connect(
                 self.clipboardDataChanged)
 
+        self.path_yara=config.get(CONF_PREFERENCE, CONF_PATH_YARA)
+        self.path_malware=config.get(CONF_PREFERENCE, CONF_PATH_MALWARE)
+        self.pathYaraEdit.setText(self.path_yara)
+        self.pathMalwareEdit.setText(self.path_malware)
 
-        modelYara = QtGui.QDirModel()
-        self.yaraTree.setModel(modelYara)
+
+
+        self.modelYara = QtGui.QDirModel()
+        self.yaraTree.setModel(self.modelYara)
         self.yaraTree.setAnimated(False)
         self.yaraTree.setIndentation(20)
         self.yaraTree.setSortingEnabled(True)
         self.yaraTree.setColumnHidden(1,True)
         self.yaraTree.setColumnHidden(2,True)
-        self.yaraTree.setColumnHidden(3,False)
+        self.yaraTree.setColumnHidden(3,True)
+        self.yaraTree.setRootIndex( self.modelYara.index(self.path_yara) );
+
+
         self.mainwindow.connect(self.yaraTree, SIGNAL('itemDoubleClicked'), self.treeOpenFile) 
 
-        modelMalware = QtGui.QDirModel()
-        self.malwareTree.setModel(modelMalware)
+        self.modelMalware = QtGui.QDirModel()
+        self.malwareTree.setModel(self.modelMalware)
         self.malwareTree.setAnimated(False)
         self.malwareTree.setIndentation(20)
         self.malwareTree.setSortingEnabled(True)
         self.malwareTree.setColumnHidden(1,True)
         self.malwareTree.setColumnHidden(2,True)
-        self.malwareTree.setColumnHidden(3,True)        
+        self.malwareTree.setColumnHidden(3,True)
+        self.malwareTree.setRootIndex( self.modelMalware.index(self.path_malware) );
+        self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection )       
 
+        QtCore.QObject.connect(self.yaraTree, QtCore.SIGNAL(_fromUtf8("doubleClicked(QModelIndex)")),self.treeOpenFile)
+        QtCore.QObject.connect(self.pathYaraEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), self.changePath)
 
         if not self.load(fileName):
             self.fileNew()
@@ -234,21 +249,21 @@ class Controlleur:
         menu.addAction(self.actionPaste)
 
     def setupViewActions(self):
-        tb = QtGui.QToolBar(self.mainwindow)
-        tb.setWindowTitle("View Actions")
-        self.mainwindow.addToolBar(tb)
+        #tb = QtGui.QToolBar(self.mainwindow)
+        #tb.setWindowTitle("View Actions")
+        #self.mainwindow.addToolBar(tb)
 
         menu = QtGui.QMenu("&View", self.mainwindow)
         self.mainwindow.menuBar().addMenu(menu)
 
         self.actionYaraBrowser = QtGui.QAction(
                 "&Yara Browser", self.mainwindow)
-        tb.addAction(self.actionYaraBrowser)
+        #tb.addAction(self.actionYaraBrowser)
         menu.addAction(self.actionYaraBrowser)
 
         self.actionMalwareBrowser = QtGui.QAction(
                 "&Malware Browser", self.mainwindow)
-        tb.addAction(self.actionMalwareBrowser)
+
         menu.addAction(self.actionMalwareBrowser)
 
     def setupYaraActions(self):
@@ -405,17 +420,31 @@ class Controlleur:
         self.setCurrentFileName(f)
         return True
 
-    def treeOpenFile(self,v):
-        print v
+    def treeOpenFile(self,index):
+        self.load( self.modelYara.filePath(index) )
+
+    def changePath(self,value):
+        print value
 
     def yaraExecute(self):
         import yara
         self.outputEdit.clear()
-        ret = "Apply Yara on "
+        ret = ""
 
         yara_script = str(self.yaraEdit.document().toPlainText())
-        print yara_script
-        ret = yara_script
+
+        modelIndexList = self.malwareTree.selectionModel().selectedIndexes();
+
+        rules = yara.compile(source=yara_script)
+        for index in modelIndexList:
+            try:  
+                path_malware = str(self.modelMalware.filePath(index))
+                matches = rules.match(path_malware)
+                ret += "%s : %s\n" % (path_malware,matches[0])
+            except Exception, e:
+                ret += "Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc())
+                logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
+                logging.debug(traceback.format_exc())
 
         codec = QtCore.QTextCodec.codecForHtml(ret)
         unistr = codec.toUnicode(ret)

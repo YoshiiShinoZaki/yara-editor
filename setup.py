@@ -101,7 +101,7 @@ data_files = [
         (os.path.join(man_dir, 'fr/man8'), ['man/fr/yara-editor.8']),
         (os.path.join(man_dir, 'man8'), ['man/fr/yara-editor.8']),
         (os.path.join(man_dir, 'en/man8'), ['man/en/yara-editor.8']),
-        (os.path.join(config_dir, 'yara/yara-editor'), ['config/yara-editor.cfg'])
+        (os.path.join(config_dir, 'yaraeditor/yara-editor'), ['config/yara-editor.cfg'])
       ]
 
 
@@ -109,7 +109,7 @@ data_files = [
 setup(
     name = 'yara-editor',
     version = '0.1',
-    packages=['yara','yara/ui','yara/core/'],
+    packages=['yaraeditor','yaraeditor/ui','yaraeditor/core/'],
     scripts = ['bin/yara-editor'],
     data_files=data_files,
     # Metadata
