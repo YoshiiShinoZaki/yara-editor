@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+@author:       Ivan Fontarensky
+@license:      GNU General Public License 3.0
+@contact:      ivan.fontarensky_at_gmail.com
+"""
+
+
+import sip
+sip.setapi('QVariant', 2)
+
+import sys,os
+import string
+import pickle
+import ConfigParser
+import logging
+
+from PyQt4 import *
+from PyQt4.QtCore import (QObject, Qt, SIGNAL, SLOT)
+
+from yara.core.controlleur import * 
+from yara.ui.yaraeditor import * 
+
+# Set the log configuration
+logging.basicConfig( \
+                filename=LOG_FILE, \
+                level=logging.DEBUG, \
+                format='%(asctime)s %(levelname)s - %(message)s', \
+                datefmt='%d/%m/%Y %H:%M:%S', \
+               )
+logger = logging.getLogger(NAME)
+
+
+def make_config_file(path):
+
+    if not os.path.exists(CONF_PATH):
+        os.makedirs(CONF_PATH)
+
+    config = ConfigParser.ConfigParser()
+    config.add_section(CONF_PREFERENCE)
+    config.set(CONF_PREFERENCE, CONF_LANG,CONF_LANG_PATH)
+
+    config_file = open(path, 'w')
+    config.write(config_file)
+    config_file.close()
+    
+
+class app:
+    index=-1
+    def __init__(self,args):
+
+        logger.info("********************")
+        logger.info(MSG_LAUNCH_APPLICATION)
+        logger.info("********************")
+
+        # l’application Qt
+        self.app=QtGui.QApplication(args)
+
+        # création de la fenêtre principale
+        self.win=QtGui.QMainWindow()
+        self.ui=Ui_YaraEditor()
+
+
+        config_path = os.path.join(CONF_PATH,CONF_FILE)
+        config = ConfigParser.ConfigParser()
+
+        try:
+            config_file = open(config_path, 'r')
+            config.readfp(config_file)
+            config_file.close()
+        except IOError as e:
+            make_config_file(config_path)
+
+
+
+        translator = QtCore.QTranslator()
+        try:
+            translator.load(config.get(CONF_PREFERENCE, CONF_LANG));
+        except ConfigParser.NoOptionError,e:
+            translator.load(CONF_LANG_PATH)
+        except ConfigParser.NoSectionError,e:
+            translator.load(CONF_LANG_PATH);
+            
+        self.app.installTranslator(translator);
+
+
+        # affichage de la fenêtre principal
+        self.ui.setupUi(self.win)
+        self.win.show()
+
+        self.controlleur=Controlleur(application=self.app,
+            ui=self.ui,
+            mainwindow=self.win)
+
+        # Creation du file browser
+        sys.exit(self.app.exec_())
+
+
+
+def main(args):
+    mapp = app(args)
+
+if __name__=="__main__":
+    main(sys.argv)
+
+
+# vim:ts=4:expandtab:sw=4
