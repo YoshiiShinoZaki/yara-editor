@@ -14,7 +14,7 @@
    <string>Yara-Editor</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../rsrc/yara-editor.qrc">
+   <iconset resource="../../rsrc/yaraeditor.qrc">
     <normaloff>:/logo/images/logo.jpg</normaloff>:/logo/images/logo.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -23,55 +23,62 @@
      <widget class="QWidget" name="widget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QTreeWidget" name="treeYara">
-         <property name="minimumSize">
-          <size>
-           <width>200</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <attribute name="headerVisible">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string notr="true">1</string>
-          </property>
-         </column>
+        <widget class="QWidget" name="widget_3" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLineEdit" name="pathYara">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeView" name="yaraTree"/>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
         <widget class="QTextEdit" name="yaraEdit"/>
+       </item>
+       <item>
+        <widget class="QWidget" name="widget_4" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QLineEdit" name="pathMalware">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeView" name="malwareTree"/>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
     </item>
     <item>
      <widget class="QWidget" name="widget_2" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>110</height>
+       </size>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
+        <widget class="QTextEdit" name="outputEdit">
+         <property name="maximumSize">
           <size>
-           <width>611</width>
-           <height>20</height>
+           <width>16777215</width>
+           <height>100</height>
           </size>
          </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="text">
-          <string>Appliquer sur la base</string>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

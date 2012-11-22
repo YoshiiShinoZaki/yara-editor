@@ -43,16 +43,23 @@ else:
 
 class Controlleur:
     index=-1
-    def __init__(self,application,ui,mainwindow,fileName=None):
+    def __init__(self,application,ui,mainwindow,fileName=None,config=None):
 
         self.app = application
         self.ui_yaraeditor = ui
         self.mainwindow = mainwindow
+        self.config = config
 
         mainwindow.setToolButtonStyle(QtCore.Qt.ToolButtonFollowStyle)
         self.setupFileActions()
         self.setupEditActions()
+        self.setupViewActions()
+        self.setupYaraActions()
         self.setupHelpActions()
+
+        self.yaraTree = self.ui_yaraeditor.yaraTree
+        self.malwareTree = self.ui_yaraeditor.malwareTree
+        self.outputEdit = self.ui_yaraeditor.outputEdit
 
         #Create our YaraHighlighter derived from QSyntaxHighlighter
         self.yaraEdit = self.ui_yaraeditor.yaraEdit
@@ -81,6 +88,27 @@ class Controlleur:
         self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
         QtGui.QApplication.clipboard().dataChanged.connect(
                 self.clipboardDataChanged)
+
+
+        modelYara = QtGui.QDirModel()
+        self.yaraTree.setModel(modelYara)
+        self.yaraTree.setAnimated(False)
+        self.yaraTree.setIndentation(20)
+        self.yaraTree.setSortingEnabled(True)
+        self.yaraTree.setColumnHidden(1,True)
+        self.yaraTree.setColumnHidden(2,True)
+        self.yaraTree.setColumnHidden(3,False)
+        self.mainwindow.connect(self.yaraTree, SIGNAL('itemDoubleClicked'), self.treeOpenFile) 
+
+        modelMalware = QtGui.QDirModel()
+        self.malwareTree.setModel(modelMalware)
+        self.malwareTree.setAnimated(False)
+        self.malwareTree.setIndentation(20)
+        self.malwareTree.setSortingEnabled(True)
+        self.malwareTree.setColumnHidden(1,True)
+        self.malwareTree.setColumnHidden(2,True)
+        self.malwareTree.setColumnHidden(3,True)        
+
 
         if not self.load(fileName):
             self.fileNew()
@@ -204,6 +232,41 @@ class Controlleur:
                 enabled=(len(QtGui.QApplication.clipboard().text()) != 0))
         tb.addAction(self.actionPaste)
         menu.addAction(self.actionPaste)
+
+    def setupViewActions(self):
+        tb = QtGui.QToolBar(self.mainwindow)
+        tb.setWindowTitle("View Actions")
+        self.mainwindow.addToolBar(tb)
+
+        menu = QtGui.QMenu("&View", self.mainwindow)
+        self.mainwindow.menuBar().addMenu(menu)
+
+        self.actionYaraBrowser = QtGui.QAction(
+                "&Yara Browser", self.mainwindow)
+        tb.addAction(self.actionYaraBrowser)
+        menu.addAction(self.actionYaraBrowser)
+
+        self.actionMalwareBrowser = QtGui.QAction(
+                "&Malware Browser", self.mainwindow)
+        tb.addAction(self.actionMalwareBrowser)
+        menu.addAction(self.actionMalwareBrowser)
+
+    def setupYaraActions(self):
+        tb = QtGui.QToolBar(self.mainwindow)
+        tb.setWindowTitle("Yara Actions")
+        self.mainwindow.addToolBar(tb)
+
+        menu = QtGui.QMenu("&Yara", self.mainwindow)
+        self.mainwindow.menuBar().addMenu(menu)
+
+        self.actionExecuteYara = QtGui.QAction(
+                QtGui.QIcon.fromTheme('yara-execute',
+                        QtGui.QIcon(rsrcPath + '/exec.png')),
+                "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
+                triggered=self.yaraExecute)
+ 
+        tb.addAction(self.actionExecuteYara)
+        menu.addAction(self.actionExecuteYara)
 
     def setupHelpActions(self):
         helpMenu = QtGui.QMenu("Help", self.mainwindow)
@@ -342,6 +405,24 @@ class Controlleur:
         self.setCurrentFileName(f)
         return True
 
+    def treeOpenFile(self,v):
+        print v
+
+    def yaraExecute(self):
+        import yara
+        self.outputEdit.clear()
+        ret = "Apply Yara on "
+
+        yara_script = str(self.yaraEdit.document().toPlainText())
+        print yara_script
+        ret = yara_script
+
+        codec = QtCore.QTextCodec.codecForHtml(ret)
+        unistr = codec.toUnicode(ret)
+        if QtCore.Qt.mightBeRichText(unistr):
+            self.outputEdit.setHtml(unistr)
+        else:
+            self.outputEdit.setPlainText(unistr)
 
 
 # vim:ts=4:expandtab:sw=4

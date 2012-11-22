@@ -42,6 +42,8 @@ def make_config_file(path):
     config = ConfigParser.ConfigParser()
     config.add_section(CONF_PREFERENCE)
     config.set(CONF_PREFERENCE, CONF_LANG,CONF_LANG_PATH)
+    config.set(CONF_PREFERENCE, CONF_PATH_YARA,os.path.expanduser('~'))
+    config.set(CONF_PREFERENCE, CONF_PATH_MALWARE,os.path.expanduser('~'))
 
     config_file = open(path, 'w')
     config.write(config_file)
@@ -91,11 +93,12 @@ class app:
         self.ui.setupUi(self.win)
         self.win.show()
 
-        for fn in args or [None]:
+        for fn in args[1:] or [None]:
             self.controlleur=Controlleur(application=self.app,
                 ui=self.ui,
                 mainwindow=self.win,
-                fileName=fn)
+                fileName=fn,
+                config=config)
 
         # Creation du file browser
         sys.exit(self.app.exec_())

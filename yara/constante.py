@@ -20,6 +20,8 @@ CONF_FILE = "conf"
 CONF_LANG = "lang"
 CONF_LANG_PATH = "%s/i18n/i18n_en.qm" % (CONF_PATH)
 CONF_PREFERENCE = "preference"
+CONF_PATH_YARA = "path_yara_rules"
+CONF_PATH_MALWARE = "path_malwares"
 
 ERROR_LOADING_CONTROLLEUR = 1
 
