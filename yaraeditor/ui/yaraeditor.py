@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Thu Nov 22 23:32:20 2012
+# Created: Fri Nov 23 00:21:56 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,15 +31,18 @@ class Ui_YaraEditor(object):
         self.horizontalLayout.setMargin(0)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.widget_3 = QtGui.QWidget(self.widget)
+        self.widget_3.setMaximumSize(QtCore.QSize(305, 16777215))
         self.widget_3.setObjectName(_fromUtf8("widget_3"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.widget_3)
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.pathYara = QtGui.QLineEdit(self.widget_3)
+        self.pathYara.setMaximumSize(QtCore.QSize(300, 16777215))
         self.pathYara.setReadOnly(False)
         self.pathYara.setObjectName(_fromUtf8("pathYara"))
         self.verticalLayout_2.addWidget(self.pathYara)
         self.yaraTree = QtGui.QTreeView(self.widget_3)
+        self.yaraTree.setMaximumSize(QtCore.QSize(300, 16777215))
         self.yaraTree.setObjectName(_fromUtf8("yaraTree"))
         self.verticalLayout_2.addWidget(self.yaraTree)
         self.horizontalLayout.addWidget(self.widget_3)
@@ -47,15 +50,18 @@ class Ui_YaraEditor(object):
         self.yaraEdit.setObjectName(_fromUtf8("yaraEdit"))
         self.horizontalLayout.addWidget(self.yaraEdit)
         self.widget_4 = QtGui.QWidget(self.widget)
+        self.widget_4.setMaximumSize(QtCore.QSize(305, 16777215))
         self.widget_4.setObjectName(_fromUtf8("widget_4"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.widget_4)
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.pathMalware = QtGui.QLineEdit(self.widget_4)
+        self.pathMalware.setMaximumSize(QtCore.QSize(300, 16777215))
         self.pathMalware.setReadOnly(False)
         self.pathMalware.setObjectName(_fromUtf8("pathMalware"))
         self.verticalLayout_3.addWidget(self.pathMalware)
         self.malwareTree = QtGui.QTreeView(self.widget_4)
+        self.malwareTree.setMaximumSize(QtCore.QSize(300, 16777215))
         self.malwareTree.setObjectName(_fromUtf8("malwareTree"))
         self.verticalLayout_3.addWidget(self.malwareTree)
         self.horizontalLayout.addWidget(self.widget_4)

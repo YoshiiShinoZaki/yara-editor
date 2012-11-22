@@ -342,16 +342,18 @@ class Controlleur:
     def fileSave(self):
         if not self.fileName:
             return self.fileSaveAs()
+        print "kkkk"
 
-        writer = QtGui.QTextDocumentWriter(self.fileName)
-        success = writer.write(self.yaraEdit.document())
-        if success:
-            self.yaraEdit.document().setModified(False)
-
-        return success
+        f = open(self.fileName, 'w')
+        f.write(str(self.yaraEdit.document().toPlainText()))
+        f.close()
+        self.yaraEdit.document().setModified(False)
+        self.modelYara.refresh()
+        self.yaraTree.setRootIndex( self.modelYara.index(self.path_yara) );
+        return True
 
     def fileSaveAs(self):
-        fn = QtGui.QFileDialog.getSaveFileName(self.mainwindow, "Save as...", "",
+        fn = QtGui.QFileDialog.getSaveFileName(self.mainwindow, "Save as...", self.path_yara,
                 "Yara files (*.yara);;HTML-Files (*.htm *.html);;All Files (*)")
 
         if not fn:
@@ -466,7 +468,7 @@ class Controlleur:
                 path_malware = str(self.modelMalware.filePath(index))
                 matches = rules.match(path_malware)
                 if len(matches)>0:
-                    report.add("%s : %s" % (path_malware,matches[0]))
+                    report.add("Signature match : %s : %s" % (path_malware,matches[0]))
             except Exception, e:
                 report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
                 logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
