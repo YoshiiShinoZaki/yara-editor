@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Thu Nov 22 23:11:22 2012
+# Created: Thu Nov 22 23:32:20 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!

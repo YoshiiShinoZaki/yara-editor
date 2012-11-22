@@ -17,7 +17,7 @@ from yaraeditor.constante import *
 from yaraeditor.core.highlighter import *
 
 from PyQt4 import *
-from PyQt4.QtCore import (QObject, Qt, SIGNAL, SLOT)
+from PyQt4.QtCore import (QObject, Qt, QDir, SIGNAL, SLOT)
 
 
 
@@ -123,7 +123,8 @@ class Controlleur:
         self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection )       
 
         QtCore.QObject.connect(self.yaraTree, QtCore.SIGNAL(_fromUtf8("doubleClicked(QModelIndex)")),self.treeOpenFile)
-        QtCore.QObject.connect(self.pathYaraEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), self.changePath)
+        QtCore.QObject.connect(self.pathYaraEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), self.changeYaraPath)
+        QtCore.QObject.connect(self.pathMalwareEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), self.changeMalwarePath)
 
         if not self.load(fileName):
             self.fileNew()
@@ -423,8 +424,31 @@ class Controlleur:
     def treeOpenFile(self,index):
         self.load( self.modelYara.filePath(index) )
 
-    def changePath(self,value):
-        print value
+    def changeYaraPath(self,path):
+        if QDir(path).exists():
+            self.path_yara = path
+            self.yaraTree.setRootIndex( self.modelYara.index(self.path_yara) );
+            
+            
+            self.config.set(CONF_PREFERENCE, CONF_PATH_YARA,self.path_yara)
+            self.save_config()
+
+
+    def changeMalwarePath(self,path):
+        if QDir(path).exists():
+            self.path_malware = path
+            self.malwareTree.setRootIndex( self.modelMalware.index(self.path_malware) );
+            
+            self.config.set(CONF_PREFERENCE, CONF_PATH_MALWARE,self.path_malware)
+            self.save_config()
+
+    def save_config(self):
+        config_path = os.path.join(CONF_PATH,CONF_FILE)
+        config_file = open(config_path, 'w')
+        self.config.write(config_file)
+        config_file.close()
+
+
 
     def yaraExecute(self):
         import yara
@@ -436,16 +460,19 @@ class Controlleur:
         modelIndexList = self.malwareTree.selectionModel().selectedIndexes();
 
         rules = yara.compile(source=yara_script)
+        report = set()
         for index in modelIndexList:
             try:  
                 path_malware = str(self.modelMalware.filePath(index))
                 matches = rules.match(path_malware)
-                ret += "%s : %s\n" % (path_malware,matches[0])
+                if len(matches)>0:
+                    report.add("%s : %s" % (path_malware,matches[0]))
             except Exception, e:
-                ret += "Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc())
+                report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
                 logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
                 logging.debug(traceback.format_exc())
 
+        ret = "\n".join(report)
         codec = QtCore.QTextCodec.codecForHtml(ret)
         unistr = codec.toUnicode(ret)
         if QtCore.Qt.mightBeRichText(unistr):
