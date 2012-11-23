@@ -455,20 +455,34 @@ class Controlleur:
     def yaraExecute(self):
         import yara
         self.outputEdit.clear()
+        report = set()
         ret = ""
 
         yara_script = str(self.yaraEdit.document().toPlainText())
 
         modelIndexList = self.malwareTree.selectionModel().selectedIndexes();
+        try:
+            rules = yara.compile(source=yara_script)
+        except yara.SyntaxError, e:
+            report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
 
-        rules = yara.compile(source=yara_script)
-        report = set()
+
         for index in modelIndexList:
             try:  
                 path_malware = str(self.modelMalware.filePath(index))
-                matches = rules.match(path_malware)
-                if len(matches)>0:
-                    report.add("Signature match : %s : %s" % (path_malware,matches[0]))
+
+                if os.path.isdir(path_malware): 
+                    for root, dirs, files in os.walk(path_malware):
+                        set_report = set()
+                        for i in files:
+                            n = os.path.join(root, i)
+                            matches = rules.match(n)
+                            if len(matches)>0:
+                                report.add("Signature match : %s : %s" % (n,matches[0]))
+                else:
+                    matches = rules.match(path_malware)
+                    if len(matches)>0:
+                        report.add("Signature match : %s : %s" % (path_malware,matches[0]))
             except Exception, e:
                 report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
                 logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
