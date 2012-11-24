@@ -65,6 +65,8 @@ class Controlleur:
         self.pathMalwareEdit = self.ui_yaraeditor.pathMalware
 
 
+        highlighter = OutputHighlighter(self.outputEdit.document())
+
         self.setupEditorActions()
 
 
@@ -227,20 +229,19 @@ class Controlleur:
         menu.addAction(self.actionPaste)
 
     def setupViewActions(self):
-        #tb = QtGui.QToolBar(self.mainwindow)
-        #tb.setWindowTitle("View Actions")
-        #self.mainwindow.addToolBar(tb)
-
         menu = QtGui.QMenu("&View", self.mainwindow)
         self.mainwindow.menuBar().addMenu(menu)
 
         self.actionYaraBrowser = QtGui.QAction(
-                "&Yara Browser", self.mainwindow)
-        #tb.addAction(self.actionYaraBrowser)
+                "&Yara Browser", self.mainwindow, toggled=self.ui_yaraeditor.dockWidgetYara.setVisible)
+        self.actionYaraBrowser.setCheckable(True)
+        self.actionYaraBrowser.setChecked(True)
         menu.addAction(self.actionYaraBrowser)
 
         self.actionMalwareBrowser = QtGui.QAction(
-                "&Malware Browser", self.mainwindow)
+                "&Malware Browser", self.mainwindow, toggled=self.ui_yaraeditor.dockWidgetMalware.setVisible)
+        self.actionMalwareBrowser.setCheckable(True)
+        self.actionMalwareBrowser.setChecked(True)
 
         menu.addAction(self.actionMalwareBrowser)
 
@@ -257,6 +258,8 @@ class Controlleur:
                         QtGui.QIcon(rsrcPath + '/exec.png')),
                 "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
                 triggered=self.yaraExecute)
+
+        print rsrcPath + '/exec.png'
  
         tb.addAction(self.actionExecuteYara)
         menu.addAction(self.actionExecuteYara)
@@ -301,7 +304,6 @@ class Controlleur:
         self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
         QtGui.QApplication.clipboard().dataChanged.connect(
                 self.clipboardDataChanged)
-
 
     def about(self):
         QtGui.QMessageBox.about(self, "About", 
@@ -348,7 +350,7 @@ class Controlleur:
 
     def fileOpen(self):
         fn = QtGui.QFileDialog.getOpenFileName(self.mainwindow, "Open File...", "",
-                "Yara files (*.yara);;HTML-Files (*.htm *.html);;All Files (*)")
+                "Yara files (*.yara);;All Files (*)")
 
         if fn:
             self.load(fn)
@@ -429,9 +431,14 @@ class Controlleur:
         unistr = codec.toUnicode(data)
 
         if QtCore.Qt.mightBeRichText(unistr):
-            self.yaraEdit.setHtml(unistr)
-        else:
-            self.yaraEdit.setPlainText(unistr)
+
+            doc = QtGui.QTextDocument()
+            doc.setHtml(unistr)
+            text = doc.toPlainText()
+
+            unistr = text
+
+        self.yaraEdit.setPlainText(unistr)
 
         self.setCurrentFileName(f)
         return True
@@ -463,8 +470,6 @@ class Controlleur:
         self.config.write(config_file)
         config_file.close()
 
-
-
     def yaraExecute(self):
         import yara
         self.outputEdit.clear()
@@ -477,7 +482,9 @@ class Controlleur:
         try:
             rules = yara.compile(source=yara_script)
         except yara.SyntaxError, e:
-            report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
+            report = "Error : Exception occured in : \n%s" % (str(e))
+            self.add_message_output(report)
+            return
 
 
         for index in modelIndexList:
@@ -489,25 +496,41 @@ class Controlleur:
                         set_report = set()
                         for i in files:
                             n = os.path.join(root, i)
-                            matches = rules.match(n)
+                            matches = self.check_yara(rules,n)
                             if len(matches)>0:
-                                report.add("Signature match : %s : %s" % (n,matches[0]))
+                                for m in matches:
+                                    report = "Signature match : %s : %s" % (m,n)
+                                    self.add_message_output(report)
                 else:
-                    matches = rules.match(path_malware)
+                    matches = self.check_yara(rules,path_malware)
                     if len(matches)>0:
-                        report.add("Signature match : %s : %s" % (path_malware,matches[0]))
+                        for m in matches:
+                            report = "Signature match : %s : %s" % (m,path_malware)
+                            self.add_message_output(report)
+
             except Exception, e:
-                report.add("Erreur : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc()))
+                report = "Error : Exception occured in : \n%s\n%s" % (str(e),traceback.format_exc())
                 logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
                 logging.debug(traceback.format_exc())
+                self.add_message_output(report)
 
-        ret = "\n".join(report)
-        codec = QtCore.QTextCodec.codecForHtml(ret)
-        unistr = codec.toUnicode(ret)
-        if QtCore.Qt.mightBeRichText(unistr):
-            self.outputEdit.setHtml(unistr)
-        else:
-            self.outputEdit.setPlainText(unistr)
+    def check_yara(self,rules,path):
+        try:
+            matches = rules.match(path)
+            return matches
+        except Exception, e:
+            logging.error("Exception occured when using yara: %s\n%s" % (str(e),traceback.format_exc()))
+        return []
+
+    def add_message_output(self, message):
+        cursor = self.outputEdit.textCursor()
+        codec = QtCore.QTextCodec.codecForHtml(message)
+        unistr = codec.toUnicode(message)
+
+        cursor.movePosition(QtGui.QTextCursor.Start, QtGui.QTextCursor.MoveAnchor)
+        self.outputEdit.setTextCursor(cursor)
+        self.outputEdit.insertPlainText(message+"\n")
+
 
 
 # vim:ts=4:expandtab:sw=4

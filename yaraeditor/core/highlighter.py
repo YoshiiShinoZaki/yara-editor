@@ -93,4 +93,47 @@ class YaraHighlighter(QtGui.QSyntaxHighlighter):
             startIndex = self.commentStartExpression.indexIn(text,
                     startIndex + commentLength);
 
+
+class OutputHighlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, parent=None):
+        super(OutputHighlighter, self).__init__(parent)
+
+        keywordFormatError = QtGui.QTextCharFormat()
+        keywordFormatError.setForeground(QtCore.Qt.red)
+        keywordFormatGood = QtGui.QTextCharFormat()
+        keywordFormatGood.setForeground(QtCore.Qt.green)
+        keywordFormatError.setFontWeight(QtGui.QFont.Bold)
+        keywordFormatGood.setFontWeight(QtGui.QFont.Bold)
+
+        keywordError = ["\\Error\\b","\\Warning\\b","\\UnboundLocalError\\b","\\SyntaxError\\b",
+                        "\\UnicodeEncodeError\\b"]
+
+        keywordGood = ["\\Signature match\\b"]
+
+
+        self.highlightingError = [(QtCore.QRegExp(pattern), keywordFormatError) for pattern in keywordError]
+        self.highlightingGood = [(QtCore.QRegExp(pattern), keywordFormatGood) for pattern in keywordGood]
+
+
+    def highlightBlock(self, text):
+        for pattern, format in self.highlightingError:
+            expression = QtCore.QRegExp(pattern)
+            index = expression.indexIn(text)
+            while index >= 0:
+                length = expression.matchedLength()
+                self.setFormat(index, length, format)
+                index = expression.indexIn(text, index + length)
+
+        for pattern, format in self.highlightingGood:
+            expression = QtCore.QRegExp(pattern)
+            index = expression.indexIn(text)
+            while index >= 0:
+                length = expression.matchedLength()
+                self.setFormat(index, length, format)
+                index = expression.indexIn(text, index + length)
+
+
+        self.setCurrentBlockState(0)
+
+
 # vim:ts=4:expandtab:sw=4
