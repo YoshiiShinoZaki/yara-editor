@@ -1,0 +1,26 @@
+
+Yara-Editor
+===============
+
+This is an editor written in Python for yara rules.
+
+REQUIRED
+=========
+
+yara-python depends on libyara, a library that implements YARA's core functions. You
+must build and install YARA in your system before building yara-python. The latest
+YARA version can be downloaded from:
+
+ yara ( http://yara.googlecode.com/files/yara-1.6.tar.gz )
+ yara-python ( )
+
+
+HOW TO BUILD
+============
+
+
+After installing YARA and yara-python you can build this way:
+
+$ tar xzvf yara-editor.tar.gz
+$ cd yara-editor
+$ sudo python setup.py install

@@ -108,7 +108,7 @@ data_files = [
 
 setup(
     name = 'yara-editor',
-    version = '0.1',
+    version = '0.1.1',
     packages=['yaraeditor','yaraeditor/ui','yaraeditor/core/'],
     scripts = ['bin/yara-editor'],
     data_files=data_files,
@@ -117,7 +117,7 @@ setup(
     author_email = 'ivan.fontarensky_at_gmail.com',
     description = 'yara-editor is a free editor for yara in python.',
     license = 'GPLv3',
-    requires=["somepackage (>1.0, !=1.5)"],
+#    requires=["somepackage (>1.0, !=1.5)"],
     # keywords = '',
     cmdclass={'uninstall': Uninstall},
 

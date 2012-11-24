@@ -20,10 +20,10 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="MainWidget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QWidget" name="widget_3" native="true">
+        <widget class="QWidget" name="widgetYara" native="true">
          <property name="maximumSize">
           <size>
            <width>305</width>
@@ -58,10 +58,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="yaraEdit"/>
+        <widget class="QWidget" name="widgetEditor" native="true"/>
        </item>
        <item>
-        <widget class="QWidget" name="widget_4" native="true">
+        <widget class="QWidget" name="widgetMalware" native="true">
          <property name="maximumSize">
           <size>
            <width>305</width>
@@ -99,7 +99,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QWidget" name="widget_2" native="true">
+     <widget class="QWidget" name="widgetOutput" native="true">
       <property name="maximumSize">
        <size>
         <width>16777215</width>

@@ -15,6 +15,7 @@ import logging
 import sys, os, traceback
 from yaraeditor.constante import *
 from yaraeditor.core.highlighter import *
+from yaraeditor.core.codeeditor import *
 
 from PyQt4 import *
 from PyQt4.QtCore import (QObject, Qt, QDir, SIGNAL, SLOT)
@@ -63,33 +64,9 @@ class Controlleur:
         self.pathYaraEdit = self.ui_yaraeditor.pathYara
         self.pathMalwareEdit = self.ui_yaraeditor.pathMalware
 
-        #Create our YaraHighlighter derived from QSyntaxHighlighter
-        self.yaraEdit = self.ui_yaraeditor.yaraEdit
-        highlighter = YaraHighlighter(self.yaraEdit.document())
 
-        self.yaraEdit.document().modificationChanged.connect(
-                self.actionSave.setEnabled)
-        self.yaraEdit.document().modificationChanged.connect(
-                self.mainwindow.setWindowModified)
-        self.yaraEdit.document().undoAvailable.connect(
-                self.actionUndo.setEnabled)
-        self.yaraEdit.document().redoAvailable.connect(
-                self.actionRedo.setEnabled)
-        self.mainwindow.setWindowModified(self.yaraEdit.document().isModified())
-        self.actionSave.setEnabled(self.yaraEdit.document().isModified())
-        self.actionUndo.setEnabled(self.yaraEdit.document().isUndoAvailable())
-        self.actionRedo.setEnabled(self.yaraEdit.document().isRedoAvailable())
-        self.actionUndo.triggered.connect(self.yaraEdit.undo)
-        self.actionRedo.triggered.connect(self.yaraEdit.redo)
-        self.actionCut.setEnabled(False)
-        self.actionCopy.setEnabled(False)
-        self.actionCut.triggered.connect(self.yaraEdit.cut)
-        self.actionCopy.triggered.connect(self.yaraEdit.copy)
-        self.actionPaste.triggered.connect(self.yaraEdit.paste)
-        self.yaraEdit.copyAvailable.connect(self.actionCut.setEnabled)
-        self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
-        QtGui.QApplication.clipboard().dataChanged.connect(
-                self.clipboardDataChanged)
+        self.setupEditorActions()
+
 
         self.path_yara=config.get(CONF_PREFERENCE, CONF_PATH_YARA)
         self.path_malware=config.get(CONF_PREFERENCE, CONF_PATH_MALWARE)
@@ -289,6 +266,43 @@ class Controlleur:
         helpMenu.addAction("About", self.about)
         helpMenu.addAction("About &Qt", QtGui.qApp.aboutQt)        
 
+    def setupEditorActions(self):
+        self.ui_yaraeditor.horizontalLayout = QtGui.QHBoxLayout(self.ui_yaraeditor.widgetEditor)
+        self.ui_yaraeditor.horizontalLayout.setMargin(0)
+        self.ui_yaraeditor.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))        
+        self.ui_yaraeditor.yaraEdit = CodeEditor(self.ui_yaraeditor.widgetEditor)
+        self.ui_yaraeditor.yaraEdit.setObjectName(_fromUtf8("yaraEdit"))
+        self.ui_yaraeditor.horizontalLayout.addWidget(self.ui_yaraeditor.yaraEdit)    
+
+        #Create our YaraHighlighter derived from QSyntaxHighlighter
+        self.yaraEdit = self.ui_yaraeditor.yaraEdit
+        highlighter = YaraHighlighter(self.yaraEdit.document())
+
+        self.yaraEdit.document().modificationChanged.connect(
+                self.actionSave.setEnabled)
+        self.yaraEdit.document().modificationChanged.connect(
+                self.mainwindow.setWindowModified)
+        self.yaraEdit.document().undoAvailable.connect(
+                self.actionUndo.setEnabled)
+        self.yaraEdit.document().redoAvailable.connect(
+                self.actionRedo.setEnabled)
+        self.mainwindow.setWindowModified(self.yaraEdit.document().isModified())
+        self.actionSave.setEnabled(self.yaraEdit.document().isModified())
+        self.actionUndo.setEnabled(self.yaraEdit.document().isUndoAvailable())
+        self.actionRedo.setEnabled(self.yaraEdit.document().isRedoAvailable())
+        self.actionUndo.triggered.connect(self.yaraEdit.undo)
+        self.actionRedo.triggered.connect(self.yaraEdit.redo)
+        self.actionCut.setEnabled(False)
+        self.actionCopy.setEnabled(False)
+        self.actionCut.triggered.connect(self.yaraEdit.cut)
+        self.actionCopy.triggered.connect(self.yaraEdit.copy)
+        self.actionPaste.triggered.connect(self.yaraEdit.paste)
+        self.yaraEdit.copyAvailable.connect(self.actionCut.setEnabled)
+        self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
+        QtGui.QApplication.clipboard().dataChanged.connect(
+                self.clipboardDataChanged)
+
+
     def about(self):
         QtGui.QMessageBox.about(self, "About", 
                 "Editor for Yara rules")
@@ -342,7 +356,6 @@ class Controlleur:
     def fileSave(self):
         if not self.fileName:
             return self.fileSaveAs()
-        print "kkkk"
 
         f = open(self.fileName, 'w')
         f.write(str(self.yaraEdit.document().toPlainText()))
