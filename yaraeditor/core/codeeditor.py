@@ -35,14 +35,30 @@ class CodeEditor(QtGui.QPlainTextEdit):
     def __init__(self, parent):
         super(CodeEditor, self).__init__(parent)
         self.lineNumberArea = LineNumberArea(self)
-
+        self.completer = None
 
         QtCore.QObject.connect(self, QtCore.SIGNAL(_fromUtf8("blockCountChanged(int)")), self.updateLineNumberAreaWidth)
         QtCore.QObject.connect(self, QtCore.SIGNAL(_fromUtf8("updateRequest(QRect,int)")), self.updateLineNumberArea)
         QtCore.QObject.connect(self, QtCore.SIGNAL(_fromUtf8("cursorPositionChanged()")), self.highlightCurrentLine)
 
         self.updateLineNumberAreaWidth(0)
-        #self.highlightCurrentLine()
+        self.highlightCurrentLine()
+
+
+        allStrings = ["all","and","any","ascii","at",
+                           "condition","contains","entrypoint","false",
+                           "filesize","fullword","for","global",
+                           "in","include","index","indexes","int8",
+                           "int16","int32","matches","meta","nocase",
+                           "not","or","of","private","rule","rva",
+                           "section","strings","them","true","uint8",
+                           "uint16","uint32","wide"]
+
+
+        completer = QtGui.QCompleter(allStrings)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        completer.setWrapAround(False)
+        self.setCompleter(completer)
 
 
     def lineNumberAreaWidth(self):
@@ -62,12 +78,9 @@ class CodeEditor(QtGui.QPlainTextEdit):
         else:
             return a1
 
-
-
     def updateLineNumberAreaWidth(self,value):
         self.setViewportMargins(self.lineNumberAreaWidth(), 0, 0, 0)
  
-
     def updateLineNumberArea(self,rect, dy):
         if (dy):
             self.lineNumberArea.scroll(0, dy);
@@ -77,13 +90,10 @@ class CodeEditor(QtGui.QPlainTextEdit):
         if (rect.contains(self.viewport().rect())):
             self.updateLineNumberAreaWidth(0);
  
-
     def resizeEvent(self, event):
         QtGui.QPlainTextEdit.resizeEvent(self,event);
         cr = self.contentsRect();
         self.lineNumberArea.setGeometry(QtCore.QRect(cr.left(), cr.top(), self.lineNumberAreaWidth(), cr.height()))
-
-
 
     def highlightCurrentLine(self):
         extraSelections = list()
@@ -102,9 +112,6 @@ class CodeEditor(QtGui.QPlainTextEdit):
 
 
         self.setExtraSelections(extraSelections);
-
-
-
 
     def lineNumberAreaPaintEvent(self,event):
 
@@ -132,6 +139,93 @@ class CodeEditor(QtGui.QPlainTextEdit):
             top = bottom
             bottom = top + self.blockBoundingRect(block).height()
             blockNumber+=1
+
+    def setCompleter(self, completer):
+        if self.completer:
+            self.disconnect(self.completer, 0, self, 0)
+        if not completer:
+            return
+
+        completer.setWidget(self)
+        completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.completer = completer
+        self.connect(self.completer,
+            QtCore.SIGNAL("activated(const QString&)"), self.insertCompletion)
+
+
+    def completer(self):
+        return self.completer
+ 
+
+    def insertCompletion(self, completion):
+        tc = self.textCursor()
+        extra = (len(completion) - len(self.completer.completionPrefix()))
+        tc.movePosition(QtGui.QTextCursor.Left)
+        tc.movePosition(QtGui.QTextCursor.EndOfWord)
+        tc.insertText(completion[-extra:])
+        self.setTextCursor(tc)
+
+
+    def textUnderCursor(self):
+        tc = self.textCursor()
+        tc.select(QtGui.QTextCursor.WordUnderCursor)
+        return tc.selectedText()
+
+    def focusInEvent(self,e):
+        if (self.completer):
+            self.completer.setWidget(self)
+        QtGui.QPlainTextEdit.focusInEvent(self,e)
+ 
+
+    
+    def keyPressEvent(self, event):
+        if self.completer and self.completer.popup().isVisible():
+            if event.key() in (
+            QtCore.Qt.Key_Enter,
+            QtCore.Qt.Key_Return,
+            QtCore.Qt.Key_Escape,
+            QtCore.Qt.Key_Tab,
+            QtCore.Qt.Key_Backtab):
+                event.ignore()
+                return
+
+        ## has ctrl-E been pressed??
+        isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier and
+                      event.key() == QtCore.Qt.Key_E)
+        if (not self.completer or not isShortcut):
+            QtGui.QPlainTextEdit.keyPressEvent(self, event)
+
+        ## ctrl or shift key on it's own??
+        ctrlOrShift = event.modifiers() in (QtCore.Qt.ControlModifier ,
+                QtCore.Qt.ShiftModifier)
+        if ctrlOrShift and len(event.text())==0:
+            # ctrl or shift key on it's own
+            return
+
+        eow = "~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="
+
+        hasModifier = ((event.modifiers() != QtCore.Qt.NoModifier) and
+                        not ctrlOrShift)
+
+        completionPrefix = self.textUnderCursor()
+
+        if (not isShortcut and (hasModifier or len(event.text())==0 or
+        len(completionPrefix) < 3 or
+        event.text()[-1] in eow )):
+            self.completer.popup().hide()
+            return
+
+        if (completionPrefix != self.completer.completionPrefix()):
+            self.completer.setCompletionPrefix(completionPrefix)
+            popup = self.completer.popup()
+            popup.setCurrentIndex(
+                self.completer.completionModel().index(0,0))
+
+        cr = self.cursorRect()
+        cr.setWidth(self.completer.popup().sizeHintForColumn(0)
+            + self.completer.popup().verticalScrollBar().sizeHint().width())
+        self.completer.complete(cr) ## popup it up!
 
 
 class LineNumberArea(QtGui.QWidget):

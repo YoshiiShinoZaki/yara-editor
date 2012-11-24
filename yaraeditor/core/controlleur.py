@@ -259,8 +259,6 @@ class Controlleur:
                 "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
                 triggered=self.yaraExecute)
 
-        print rsrcPath + '/exec.png'
- 
         tb.addAction(self.actionExecuteYara)
         menu.addAction(self.actionExecuteYara)
 
