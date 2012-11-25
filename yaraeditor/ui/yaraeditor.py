@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Sun Nov 25 11:49:33 2012
+# Created: Sun Nov 25 12:44:50 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -141,14 +141,9 @@ class Ui_YaraEditor(object):
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.actionEnregistrer = QtGui.QAction(YaraEditor)
         self.actionEnregistrer.setObjectName(_fromUtf8("actionEnregistrer"))
-        self.actionAaa = QtGui.QAction(YaraEditor)
-        self.actionAaa.setCheckable(True)
-        self.actionAaa.setChecked(True)
-        self.actionAaa.setObjectName(_fromUtf8("actionAaa"))
 
         self.retranslateUi(YaraEditor)
         self.tabWidget.setCurrentIndex(0)
-        QtCore.QObject.connect(self.actionAaa, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.dockWidgetYara.setVisible)
         QtCore.QMetaObject.connectSlotsByName(YaraEditor)
 
     def retranslateUi(self, YaraEditor):
@@ -164,6 +159,5 @@ class Ui_YaraEditor(object):
         self.actionExit.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+Q", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEnregistrer.setText(QtGui.QApplication.translate("YaraEditor", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEnregistrer.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionAaa.setText(QtGui.QApplication.translate("YaraEditor", "aaa", None, QtGui.QApplication.UnicodeUTF8))
 
 import yaraeditor_rc

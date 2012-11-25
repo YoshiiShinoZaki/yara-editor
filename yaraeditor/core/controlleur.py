@@ -267,13 +267,13 @@ class Controlleur:
 
         menu = QtGui.QMenu("&Yara", self.mainwindow)
         self.mainwindow.menuBar().addMenu(menu)
-
+        iconExec = QtGui.QIcon()
+        iconExec.addPixmap(QtGui.QPixmap(_fromUtf8(":/icon/images/win/exec.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExecuteYara = QtGui.QAction(
-                QtGui.QIcon.fromTheme('yara-execute',
-                        QtGui.QIcon(rsrcPath + '/exec.png')),
+                QtGui.QIcon.fromTheme('yara-execute',iconExec),
                 "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
                 triggered=self.yaraExecute)
-
+        
         tb.addAction(self.actionExecuteYara)
         menu.addAction(self.actionExecuteYara)
 
@@ -544,16 +544,19 @@ class Controlleur:
             self.add_message_output(report)
             return
 
+        pathes = set()
 
-        for index in modelIndexList:
+        [pathes.add(str(self.modelMalware.filePath(index))) for index in modelIndexList]
+
+        for path_malware in pathes:
             try:  
-                path_malware = str(self.modelMalware.filePath(index))
 
                 if os.path.isdir(path_malware): 
                     for root, dirs, files in os.walk(path_malware):
                         set_report = set()
                         for i in files:
                             n = os.path.join(root, i)
+
                             matches = self.check_yara(rules,n)
                             if len(matches)>0:
                                 for m in matches:
