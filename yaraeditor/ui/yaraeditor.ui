@@ -82,7 +82,7 @@
       <widget class="QWidget" name="widgetYara" native="true">
        <property name="maximumSize">
         <size>
-         <width>305</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -104,7 +104,7 @@
          <widget class="QTreeView" name="yaraTree">
           <property name="maximumSize">
            <size>
-            <width>300</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -120,7 +120,7 @@
    <property name="minimumSize">
     <size>
      <width>310</width>
-     <height>175</height>
+     <height>231</height>
     </size>
    </property>
    <attribute name="dockWidgetArea">
@@ -161,6 +161,62 @@
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetInspector">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_4">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_properties">
+        <attribute name="title">
+         <string>Tab Properties</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QTreeWidget" name="treeMalwareProperties">
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_strings">
+        <attribute name="title">
+         <string>Strings</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QTreeWidget" name="treeMalwareStrings">
+           <property name="headerHidden">
+            <bool>true</bool>
+           </property>
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>

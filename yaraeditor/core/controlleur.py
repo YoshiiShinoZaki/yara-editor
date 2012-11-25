@@ -12,7 +12,7 @@
 import string
 import pickle
 import logging
-import sys, os, traceback
+import sys, os, re, traceback
 from yaraeditor.constante import *
 from yaraeditor.core.highlighter import *
 from yaraeditor.core.codeeditor import *
@@ -63,6 +63,8 @@ class Controlleur:
         self.outputEdit = self.ui_yaraeditor.outputEdit
         self.pathYaraEdit = self.ui_yaraeditor.pathYara
         self.pathMalwareEdit = self.ui_yaraeditor.pathMalware
+        self.treeMalwareProperties = self.ui_yaraeditor.treeMalwareProperties
+        self.treeMalwareStrings = self.ui_yaraeditor.treeMalwareStrings
 
 
         highlighter = OutputHighlighter(self.outputEdit.document())
@@ -99,7 +101,11 @@ class Controlleur:
         self.malwareTree.setColumnHidden(2,True)
         self.malwareTree.setColumnHidden(3,True)
         self.malwareTree.setRootIndex( self.modelMalware.index(self.path_malware) );
-        self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection )       
+        #self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection ) 
+
+
+        self.malwareTree.setContextMenuPolicy(Qt.CustomContextMenu);
+        self.malwareTree.customContextMenuRequested.connect(self.menuContextTree)
 
         QtCore.QObject.connect(self.yaraTree, QtCore.SIGNAL(_fromUtf8("doubleClicked(QModelIndex)")),self.treeOpenFile)
         QtCore.QObject.connect(self.pathYaraEdit, QtCore.SIGNAL(_fromUtf8("textChanged(QString)")), self.changeYaraPath)
@@ -245,6 +251,15 @@ class Controlleur:
 
         menu.addAction(self.actionMalwareBrowser)
 
+        self.actionInspector = QtGui.QAction(
+                "&Inspector", self.mainwindow, toggled=self.ui_yaraeditor.dockWidgetInspector.setVisible)
+        self.actionInspector.setCheckable(True)
+        self.actionInspector.setChecked(True)
+
+        menu.addAction(self.actionInspector)
+
+
+
     def setupYaraActions(self):
         tb = QtGui.QToolBar(self.mainwindow)
         tb.setWindowTitle("Yara Actions")
@@ -310,6 +325,51 @@ class Controlleur:
     def clipboardDataChanged(self):
         self.actionPaste.setEnabled(
                 len(QtGui.QApplication.clipboard().text()) != 0)
+
+    def menuContextTree(self, point):
+
+        # On définie le menu contextuel.
+        menu=QtGui.QMenu()
+
+        action_inspect_malware=menu.addAction("Inspect")
+        QtCore.QObject.connect(action_inspect_malware, QtCore.SIGNAL("triggered()"), self.inspect_malware)
+
+        # Il reste à lier chaque clic sur le menu à une action réelle via un SLOT.
+        menu.exec_(QtGui.QCursor.pos())
+
+    def inspect_malware(self):
+        logger.debug('inspect_malware() :')
+        self.treeMalwareProperties.clear()
+        self.treeMalwareStrings.clear()
+        for index in self.malwareTree.selectedIndexes():
+            fileInfo = self.modelMalware.fileInfo(index)
+            self.add_element(self.treeMalwareProperties,"Name",fileInfo.fileName())
+            self.add_element(self.treeMalwareProperties,"Path",fileInfo.filePath())
+            self.add_element(self.treeMalwareProperties,"Size",str(fileInfo.size()))
+            fi = open(str(fileInfo.filePath()),'r')
+            data = fi.read()
+            fi.close()
+            sha1 = QtCore.QCryptographicHash.hash(data,QtCore.QCryptographicHash.Sha1).toHex()  
+            md5 = QtCore.QCryptographicHash.hash(data,QtCore.QCryptographicHash.Md5).toHex()  
+            self.add_element(self.treeMalwareProperties,"MD5",str(md5))
+            self.add_element(self.treeMalwareProperties,"SHA1",str(sha1))
+
+            for s in self.get_strings(data):
+                self.add_element(self.treeMalwareStrings,str(s))
+            
+    def add_element(self,tree,name,value=""):
+        item = QtGui.QTreeWidgetItem(tree)
+        item.setText(0,name)
+        if value!="":
+            item.setText(1,value)
+
+    def get_strings(self,data,length_min=7):
+        strings = list()
+        for m in re.finditer("([\x20-\x7e]{3,})", data):
+            if len(m.group(1))> length_min:
+                strings.append(m.group(1))
+        return strings
+
 
     def maybeSave(self):
         if not self.yaraEdit.document().isModified():
