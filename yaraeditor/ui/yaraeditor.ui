@@ -202,20 +202,7 @@
         <attribute name="title">
          <string>Strings</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-         <item>
-          <widget class="QTreeWidget" name="treeMalwareStrings">
-           <property name="headerHidden">
-            <bool>true</bool>
-           </property>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
+        <layout class="QVBoxLayout" name="verticalLayout_7"/>
        </widget>
       </widget>
      </item>

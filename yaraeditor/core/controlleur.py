@@ -16,6 +16,7 @@ import sys, os, re, traceback
 from yaraeditor.constante import *
 from yaraeditor.core.highlighter import *
 from yaraeditor.core.codeeditor import *
+from yaraeditor.core.ytreewidget import *
 
 from PyQt4 import *
 from PyQt4.QtCore import (QObject, Qt, QDir, SIGNAL, SLOT)
@@ -57,6 +58,8 @@ class Controlleur:
         self.setupViewActions()
         self.setupYaraActions()
         self.setupHelpActions()
+        self.setupEditorActions()
+        self.setupPropertiesActions()
 
         self.yaraTree = self.ui_yaraeditor.yaraTree
         self.malwareTree = self.ui_yaraeditor.malwareTree
@@ -69,15 +72,13 @@ class Controlleur:
 
         highlighter = OutputHighlighter(self.outputEdit.document())
 
-        self.setupEditorActions()
+        
 
 
         self.path_yara=config.get(CONF_PREFERENCE, CONF_PATH_YARA)
         self.path_malware=config.get(CONF_PREFERENCE, CONF_PATH_MALWARE)
         self.pathYaraEdit.setText(self.path_yara)
         self.pathMalwareEdit.setText(self.path_malware)
-
-
 
         self.modelYara = QtGui.QDirModel()
         self.yaraTree.setModel(self.modelYara)
@@ -104,6 +105,15 @@ class Controlleur:
         #self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection ) 
 
 
+
+
+        #self.treeMalwareStrings.setDragDropMode(self.treeMalwareStrings.DragDrop)
+        self.treeMalwareStrings.setDragEnabled(True)
+
+        #self.treeMalwareStrings.setDropIndicatorShown(True)
+
+        
+
         self.malwareTree.setContextMenuPolicy(Qt.CustomContextMenu);
         self.malwareTree.customContextMenuRequested.connect(self.menuContextTree)
 
@@ -113,7 +123,6 @@ class Controlleur:
 
         if not self.load(fileName):
             self.fileNew()
-
 
     def setupFileActions(self):
         tb = QtGui.QToolBar(self.mainwindow)
@@ -258,8 +267,6 @@ class Controlleur:
 
         menu.addAction(self.actionInspector)
 
-
-
     def setupYaraActions(self):
         tb = QtGui.QToolBar(self.mainwindow)
         tb.setWindowTitle("Yara Actions")
@@ -289,6 +296,7 @@ class Controlleur:
         self.ui_yaraeditor.yaraEdit = CodeEditor(self.ui_yaraeditor.widgetEditor)
         self.ui_yaraeditor.yaraEdit.setObjectName(_fromUtf8("yaraEdit"))
         self.ui_yaraeditor.horizontalLayout.addWidget(self.ui_yaraeditor.yaraEdit)    
+        self.ui_yaraeditor.widgetEditor.setAcceptDrops(True)
 
         #Create our YaraHighlighter derived from QSyntaxHighlighter
         self.yaraEdit = self.ui_yaraeditor.yaraEdit
@@ -317,6 +325,16 @@ class Controlleur:
         self.yaraEdit.copyAvailable.connect(self.actionCopy.setEnabled)
         QtGui.QApplication.clipboard().dataChanged.connect(
                 self.clipboardDataChanged)
+
+    def setupPropertiesActions(self):
+        self.ui_yaraeditor.verticalLayout_7 = QtGui.QVBoxLayout(self.ui_yaraeditor.tab_strings)
+        self.ui_yaraeditor.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
+        self.ui_yaraeditor.treeMalwareStrings = YTreeWidget(self.ui_yaraeditor.tab_strings)
+        self.ui_yaraeditor.treeMalwareStrings.setHeaderHidden(True)
+        self.ui_yaraeditor.treeMalwareStrings.setObjectName(_fromUtf8("treeMalwareStrings"))
+        self.ui_yaraeditor.verticalLayout_7.addWidget(self.ui_yaraeditor.treeMalwareStrings)
+
+
 
     def about(self):
         QtGui.QMessageBox.about(self, "About", 
@@ -369,7 +387,6 @@ class Controlleur:
             if len(m.group(1))> length_min:
                 strings.append(m.group(1))
         return strings
-
 
     def maybeSave(self):
         if not self.yaraEdit.document().isModified():

@@ -44,7 +44,8 @@ class CodeEditor(QtGui.QPlainTextEdit):
         self.updateLineNumberAreaWidth(0)
         self.highlightCurrentLine()
 
-
+        self.setAcceptDrops(True)
+        
         allStrings = ["all","and","any","ascii","at",
                            "condition","contains","entrypoint","false",
                            "filesize","fullword","for","global",
@@ -59,6 +60,26 @@ class CodeEditor(QtGui.QPlainTextEdit):
         completer.setCaseSensitivity(Qt.CaseInsensitive)
         completer.setWrapAround(False)
         self.setCompleter(completer)
+
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("text/plain"):
+            event.accept()
+        else:
+            event.reject()
+
+
+    def dragLeaveEvent(self, event):
+        event.accept()
+
+
+    def dropEvent(self, event):
+        data = event.mimeData().data("text/plain")
+        tc = self.textCursor()
+        tc.movePosition(QtGui.QTextCursor.Left)
+        tc.movePosition(QtGui.QTextCursor.EndOfWord)        
+        tc.insertText(str(data))
+        self.setTextCursor(tc)
 
 
     def lineNumberAreaWidth(self):
@@ -152,7 +173,6 @@ class CodeEditor(QtGui.QPlainTextEdit):
         self.completer = completer
         self.connect(self.completer,
             QtCore.SIGNAL("activated(const QString&)"), self.insertCompletion)
-
 
     def completer(self):
         return self.completer

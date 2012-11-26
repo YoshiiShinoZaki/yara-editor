@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Sun Nov 25 12:44:50 2012
+# Created: Mon Nov 26 00:44:56 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,12 +122,8 @@ class Ui_YaraEditor(object):
         self.tabWidget.addTab(self.tab_properties, _fromUtf8(""))
         self.tab_strings = QtGui.QWidget()
         self.tab_strings.setObjectName(_fromUtf8("tab_strings"))
-        self.verticalLayout_7 = QtGui.QVBoxLayout(self.tab_strings)
-        self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
-        self.treeMalwareStrings = QtGui.QTreeWidget(self.tab_strings)
-        self.treeMalwareStrings.setHeaderHidden(True)
-        self.treeMalwareStrings.setObjectName(_fromUtf8("treeMalwareStrings"))
-        self.verticalLayout_7.addWidget(self.treeMalwareStrings)
+        #self.verticalLayout_7 = QtGui.QVBoxLayout(self.tab_strings)
+        #self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
         self.tabWidget.addTab(self.tab_strings, _fromUtf8(""))
         self.verticalLayout_6.addWidget(self.tabWidget)
         self.dockWidgetInspector.setWidget(self.dockWidgetContents_4)
@@ -151,7 +147,6 @@ class Ui_YaraEditor(object):
         self.treeMalwareProperties.headerItem().setText(0, QtGui.QApplication.translate("YaraEditor", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.treeMalwareProperties.headerItem().setText(1, QtGui.QApplication.translate("YaraEditor", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_properties), QtGui.QApplication.translate("YaraEditor", "Tab Properties", None, QtGui.QApplication.UnicodeUTF8))
-        self.treeMalwareStrings.headerItem().setText(0, QtGui.QApplication.translate("YaraEditor", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_strings), QtGui.QApplication.translate("YaraEditor", "Strings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNouveau.setText(QtGui.QApplication.translate("YaraEditor", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNouveau.setShortcut(QtGui.QApplication.translate("YaraEditor", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
