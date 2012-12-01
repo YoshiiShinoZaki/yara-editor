@@ -641,7 +641,7 @@ class Controlleur:
         self.app.connect(self.ui_generator.btnBrowseMalware,SIGNAL("clicked()"),self.generator_open_malware)
         self.app.connect(self.ui_generator.btnBrowseNewFile,SIGNAL("clicked()"),self.generator_add_file)
         self.app.connect(self.ui_generator.listFiles, QtCore.SIGNAL("customContextMenuRequested(const QPoint &)"), self.generator_menuContextTree)
-
+        self.ui_generator.listFiles.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
         if self.dialog_generator.exec_():
             print "ok"
@@ -682,11 +682,11 @@ class Controlleur:
 
 
     def generator_remove_file(self,path=""): 
-        
         items = self.ui_generator.listFiles.selectedItems()
         for item in items:
-            self.ui_generator.removeItemWidget(item)
-
+            index = self.ui_generator.listFiles.row(item)
+            self.ui_generator.listFiles.takeItem(index)
+        self.generator_update()
         
     def generator_add_string(self,malware):
         f = open(malware,'r')
@@ -705,7 +705,6 @@ class Controlleur:
             self.remove_element(self.ui_generator.treeWidget,str(s))
 
     def generator_menuContextTree(self, point):
-
         # On définie le menu contextuel.
         menu=QtGui.QMenu()
 
