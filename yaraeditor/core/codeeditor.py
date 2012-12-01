@@ -78,8 +78,9 @@ class CodeEditor(QtGui.QPlainTextEdit):
         tc = self.textCursor()
         tc.movePosition(QtGui.QTextCursor.Left)
         tc.movePosition(QtGui.QTextCursor.EndOfWord)        
-        tc.insertText(str(data))
+
         self.setTextCursor(tc)
+        QtGui.QPlainTextEdit.dropEvent(self,event); 
 
 
     def lineNumberAreaWidth(self):
