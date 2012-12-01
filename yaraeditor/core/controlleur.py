@@ -281,6 +281,9 @@ class Controlleur:
                 "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
                 triggered=self.yaraExecute)
         
+        self.actionGenerateRules = QtGui.QAction(
+                "&Generate Rules", self.mainwindow, triggered=self.yaraRulesGenerator)
+
         tb.addAction(self.actionExecuteYara)
         menu.addAction(self.actionExecuteYara)
 
@@ -551,6 +554,7 @@ class Controlleur:
         report = set()
         ret = ""
 
+        self.add_message_output("Compilation...")
         yara_script = str(self.yaraEdit.document().toPlainText())
 
         modelIndexList = self.malwareTree.selectionModel().selectedIndexes();
@@ -565,6 +569,8 @@ class Controlleur:
 
         [pathes.add(str(self.modelMalware.filePath(index))) for index in modelIndexList]
 
+        self.add_message_output("Execution...")
+        found=0
         for path_malware in pathes:
             try:  
 
@@ -579,11 +585,13 @@ class Controlleur:
                                 for m in matches:
                                     report = "Signature match : %s : %s" % (m,n)
                                     self.add_message_output(report)
+                                    found+=1
                 else:
                     matches = self.check_yara(rules,path_malware)
                     if len(matches)>0:
                         for m in matches:
                             report = "Signature match : %s : %s" % (m,path_malware)
+                            found+=1
                             self.add_message_output(report)
 
             except Exception, e:
@@ -591,6 +599,8 @@ class Controlleur:
                 logging.error("Exception occured in yaraExecute(): %s" % (str(e)))
                 logging.debug(traceback.format_exc())
                 self.add_message_output(report)
+
+        self.add_message_output("Finish : %d match" % found)
 
     def check_yara(self,rules,path):
         try:
@@ -601,14 +611,18 @@ class Controlleur:
         return []
 
     def add_message_output(self, message):
+        import datetime
         cursor = self.outputEdit.textCursor()
         codec = QtCore.QTextCodec.codecForHtml(message)
         unistr = codec.toUnicode(message)
 
         cursor.movePosition(QtGui.QTextCursor.Start, QtGui.QTextCursor.MoveAnchor)
         self.outputEdit.setTextCursor(cursor)
-        self.outputEdit.insertPlainText(message+"\n")
+        timestamp = str(datetime.datetime.now())
+        self.outputEdit.insertPlainText("["+timestamp+"] "+message+"\n")
 
 
+    def yaraRulesGenerator(self):
+        print "Generation"
 
 # vim:ts=4:expandtab:sw=4

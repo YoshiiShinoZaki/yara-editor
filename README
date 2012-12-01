@@ -12,7 +12,7 @@ must build and install YARA in your system before building yara-python. The late
 YARA version can be downloaded from:
 
  yara ( http://yara.googlecode.com/files/yara-1.6.tar.gz )
- yara-python ( )
+ yara-python ( http://yara.googlecode.com/files/yara-1.6.tar.gz )
 
 
 HOW TO BUILD

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Mon Nov 26 00:44:56 2012
+# Created: Sat Dec  1 15:32:11 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,8 +122,8 @@ class Ui_YaraEditor(object):
         self.tabWidget.addTab(self.tab_properties, _fromUtf8(""))
         self.tab_strings = QtGui.QWidget()
         self.tab_strings.setObjectName(_fromUtf8("tab_strings"))
-        #self.verticalLayout_7 = QtGui.QVBoxLayout(self.tab_strings)
-        #self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
+        self.verticalLayout_7 = QtGui.QVBoxLayout(self.tab_strings)
+        self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
         self.tabWidget.addTab(self.tab_strings, _fromUtf8(""))
         self.verticalLayout_6.addWidget(self.tabWidget)
         self.dockWidgetInspector.setWidget(self.dockWidgetContents_4)
