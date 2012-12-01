@@ -644,9 +644,27 @@ class Controlleur:
         self.ui_generator.listFiles.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 
         if self.dialog_generator.exec_():
-            print "ok"
-        else:
-            print "nok"
+            rules = self.generator_generate_rules()
+            self.yaraEdit.setPlainText(rules)
+
+            
+
+
+    def generator_generate_rules(self):
+        count = self.ui_generator.treeWidget.topLevelItemCount()
+        set_strings = set()
+        set_condition = set()
+        for i in range(0,count):
+            item = self.ui_generator.treeWidget.topLevelItem(i)
+            condition = "$str%d" % i
+            value = "\t%s=\"%s\""%(condition,item.text(0))
+            set_strings.add(value)
+            set_condition.add(condition)
+
+        rules = TEMPLATE_YARA
+        rules = rules.replace("###STRINGS###","\n".join(set_strings))
+        rules = rules.replace("###CONDITION###","\t(%s)" % " or ".join(set_condition))
+        return rules
 
     def generator_open_malware(self,path=""):
 
@@ -659,8 +677,8 @@ class Controlleur:
         self.ui_generator.editPathMalware.setText(path)
         self.generator_update()
 
-    def generator_add_file(self,path=""): 
 
+    def generator_add_file(self,path=""): 
         if path == "":
             pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*.*)")
         if pathes == None:
@@ -670,6 +688,7 @@ class Controlleur:
             item = QtGui.QListWidgetItem(path)
             self.ui_generator.listFiles.addItem(item)
         self.generator_update()            
+
 
     def generator_update(self):
         path_malware = self.ui_generator.editPathMalware.text() 
@@ -692,15 +711,14 @@ class Controlleur:
         f = open(malware,'r')
         data = f.read()
         f.close()
-
         for s in self.get_strings(data):
-            self.add_element(self.ui_generator.treeWidget,str(s))
+            if '"' not in s and '\\' not in s:
+                self.add_element(self.ui_generator.treeWidget,str(s))
 
     def generator_remove_string(self,malware):
         f = open(malware,'r')
         data = f.read()
         f.close()
-
         for s in self.get_strings(data):
             self.remove_element(self.ui_generator.treeWidget,str(s))
 

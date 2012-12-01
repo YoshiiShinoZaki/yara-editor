@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'rules_generator.ui'
 #
-# Created: Sat Dec  1 17:39:26 2012
+# Created: Sat Dec  1 18:05:45 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
