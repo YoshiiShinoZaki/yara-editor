@@ -280,12 +280,12 @@ class Controlleur:
                 QtGui.QIcon.fromTheme('yara-execute',iconExec),
                 "&Execute", self.mainwindow, shortcut=QtGui.QKeySequence(Qt.Key_F5),
                 triggered=self.yaraExecute)
-        
-        self.actionGenerateRules = QtGui.QAction(
-                "&Generate Rules", self.mainwindow, triggered=self.yaraRulesGenerator)
-
         tb.addAction(self.actionExecuteYara)
         menu.addAction(self.actionExecuteYara)
+
+        self.actionGenerateRules = QtGui.QAction(
+                "&Generate Rules", self.mainwindow, triggered=self.yaraRulesGenerator)
+        menu.addAction(self.actionGenerateRules)
 
     def setupHelpActions(self):
         helpMenu = QtGui.QMenu("Help", self.mainwindow)
@@ -355,6 +355,9 @@ class Controlleur:
         action_inspect_malware=menu.addAction("Inspect")
         QtCore.QObject.connect(action_inspect_malware, QtCore.SIGNAL("triggered()"), self.inspect_malware)
 
+        action_generate_rules=menu.addAction("Generate Rules")
+        QtCore.QObject.connect(action_generate_rules, QtCore.SIGNAL("triggered()"), self.yaraRulesGenerator)
+
         # Il reste à lier chaque clic sur le menu à une action réelle via un SLOT.
         menu.exec_(QtGui.QCursor.pos())
 
@@ -383,6 +386,13 @@ class Controlleur:
         item.setText(0,name)
         if value!="":
             item.setText(1,value)
+
+    def remove_element(self,tree,name):
+        findings = tree.findItems(name,Qt.MatchCaseSensitive)
+        for f in findings:
+            index = tree.indexOfTopLevelItem(f)
+            tree.takeTopLevelItem(index)
+
 
     def get_strings(self,data,length_min=7):
         strings = list()
@@ -623,6 +633,88 @@ class Controlleur:
 
 
     def yaraRulesGenerator(self):
-        print "Generation"
+        from yaraeditor.ui.rules_generator import *
+        self.dialog_generator = QtGui.QDialog()
+        self.ui_generator=Ui_DialogGenerator()
+        self.ui_generator.setupUi(self.dialog_generator)
+
+        self.app.connect(self.ui_generator.btnBrowseMalware,SIGNAL("clicked()"),self.generator_open_malware)
+        self.app.connect(self.ui_generator.btnBrowseNewFile,SIGNAL("clicked()"),self.generator_add_file)
+        self.app.connect(self.ui_generator.listFiles, QtCore.SIGNAL("customContextMenuRequested(const QPoint &)"), self.generator_menuContextTree)
+
+
+        if self.dialog_generator.exec_():
+            print "ok"
+        else:
+            print "nok"
+
+    def generator_open_malware(self,path=""):
+
+        if path == "":
+            path = QtGui.QFileDialog.getOpenFileName(self.mainwindow, "Open File","","*")
+        if path =="":
+            return 
+
+        self.ui_generator.treeWidget.clear()
+        self.ui_generator.editPathMalware.setText(path)
+        self.generator_update()
+
+    def generator_add_file(self,path=""): 
+
+        if path == "":
+            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*.*)")
+        if pathes == None:
+            return 
+
+        for path in pathes:
+            item = QtGui.QListWidgetItem(path)
+            self.ui_generator.listFiles.addItem(item)
+        self.generator_update()            
+
+    def generator_update(self):
+        path_malware = self.ui_generator.editPathMalware.text() 
+        self.generator_add_string(path_malware)
+
+        count = self.ui_generator.listFiles.count()
+        for index in range(0,count):
+            item = self.ui_generator.listFiles.item(index)
+            self.generator_remove_string(item.text())
+
+
+    def generator_remove_file(self,path=""): 
+        
+        items = self.ui_generator.listFiles.selectedItems()
+        for item in items:
+            self.ui_generator.removeItemWidget(item)
+
+        
+    def generator_add_string(self,malware):
+        f = open(malware,'r')
+        data = f.read()
+        f.close()
+
+        for s in self.get_strings(data):
+            self.add_element(self.ui_generator.treeWidget,str(s))
+
+    def generator_remove_string(self,malware):
+        f = open(malware,'r')
+        data = f.read()
+        f.close()
+
+        for s in self.get_strings(data):
+            self.remove_element(self.ui_generator.treeWidget,str(s))
+
+    def generator_menuContextTree(self, point):
+
+        # On définie le menu contextuel.
+        menu=QtGui.QMenu()
+
+        action_delete=menu.addAction("Remove")
+        QtCore.QObject.connect(action_delete, QtCore.SIGNAL("triggered()"), self.generator_remove_file)
+
+        # Il reste à lier chaque clic sur le menu à une action réelle via un SLOT.
+        menu.exec_(QtGui.QCursor.pos())
+
+
 
 # vim:ts=4:expandtab:sw=4

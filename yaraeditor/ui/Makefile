@@ -17,6 +17,7 @@ clean: clean-pyc
 
 build:
 	$(PYUIC4) yaraeditor.ui > yaraeditor.py
+	$(PYUIC4) rules_generator.ui > rules_generator.py	
 
 
 clean-pyc:
