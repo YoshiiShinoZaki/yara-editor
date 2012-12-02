@@ -104,15 +104,10 @@ class Controlleur:
         self.malwareTree.setRootIndex( self.modelMalware.index(self.path_malware) );
         #self.malwareTree.setSelectionMode( QtGui.QAbstractItemView.MultiSelection ) 
 
-
-
-
         #self.treeMalwareStrings.setDragDropMode(self.treeMalwareStrings.DragDrop)
         self.treeMalwareStrings.setDragEnabled(True)
 
         #self.treeMalwareStrings.setDropIndicatorShown(True)
-
-        
 
         self.malwareTree.setContextMenuPolicy(Qt.CustomContextMenu);
         self.malwareTree.customContextMenuRequested.connect(self.menuContextTree)
@@ -289,6 +284,7 @@ class Controlleur:
 
     def setupHelpActions(self):
         helpMenu = QtGui.QMenu("Help", self.mainwindow)
+        self.mainwindow.menuBar().addMenu(helpMenu)
         helpMenu.addAction("About", self.about)
         helpMenu.addAction("About &Qt", QtGui.qApp.aboutQt)        
 
@@ -340,8 +336,12 @@ class Controlleur:
 
 
     def about(self):
-        QtGui.QMessageBox.about(self, "About", 
-                "Editor for Yara rules")
+        QtGui.QMessageBox.about(self.mainwindow, "About", 
+                """
+                Yara-Editor Version (%s)
+                Editor for Yara rules
+                %s
+                """ % (VERSION,AUTHOR))
 
     def clipboardDataChanged(self):
         self.actionPaste.setEnabled(

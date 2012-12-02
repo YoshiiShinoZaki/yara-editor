@@ -108,7 +108,7 @@ data_files = [
 
 setup(
     name = 'yara-editor',
-    version = '0.1.4',
+    version = '0.1.5',
     packages=['yaraeditor','yaraeditor/ui','yaraeditor/core/'],
     scripts = ['bin/yara-editor'],
     data_files=data_files,

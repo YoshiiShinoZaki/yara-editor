@@ -10,8 +10,9 @@
 
 import os
 
-VERSION = "0.1"
+VERSION = "0.1.5"
 DEBUG = 1
+AUTHOR = "Ivan Fontarensky"
 NAME = "yara-editor"
 LOG_FILE = "./%s.log" % (NAME)
 
