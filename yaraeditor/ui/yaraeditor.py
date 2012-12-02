@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Sat Dec  1 18:05:45 2012
+# Created: Sun Dec  2 10:30:50 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,6 +67,9 @@ class Ui_YaraEditor(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.widgetYara)
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.label_3 = QtGui.QLabel(self.widgetYara)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.verticalLayout_2.addWidget(self.label_3)
         self.pathYara = QtGui.QLineEdit(self.widgetYara)
         self.pathYara.setMaximumSize(QtCore.QSize(300, 16777215))
         self.pathYara.setReadOnly(False)
@@ -92,6 +95,9 @@ class Ui_YaraEditor(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.widgetMalware)
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
+        self.label_2 = QtGui.QLabel(self.widgetMalware)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.verticalLayout_3.addWidget(self.label_2)
         self.pathMalware = QtGui.QLineEdit(self.widgetMalware)
         self.pathMalware.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.pathMalware.setReadOnly(False)
@@ -122,8 +128,8 @@ class Ui_YaraEditor(object):
         self.tabWidget.addTab(self.tab_properties, _fromUtf8(""))
         self.tab_strings = QtGui.QWidget()
         self.tab_strings.setObjectName(_fromUtf8("tab_strings"))
-        self.verticalLayout_7 = QtGui.QVBoxLayout(self.tab_strings)
-        self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
+
+
         self.tabWidget.addTab(self.tab_strings, _fromUtf8(""))
         self.verticalLayout_6.addWidget(self.tabWidget)
         self.dockWidgetInspector.setWidget(self.dockWidgetContents_4)
@@ -139,11 +145,13 @@ class Ui_YaraEditor(object):
         self.actionEnregistrer.setObjectName(_fromUtf8("actionEnregistrer"))
 
         self.retranslateUi(YaraEditor)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(YaraEditor)
 
     def retranslateUi(self, YaraEditor):
         YaraEditor.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "Yara-Editor", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("YaraEditor", "Yara Browser", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("YaraEditor", "Malware Browser", None, QtGui.QApplication.UnicodeUTF8))
         self.treeMalwareProperties.headerItem().setText(0, QtGui.QApplication.translate("YaraEditor", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.treeMalwareProperties.headerItem().setText(1, QtGui.QApplication.translate("YaraEditor", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_properties), QtGui.QApplication.translate("YaraEditor", "Tab Properties", None, QtGui.QApplication.UnicodeUTF8))

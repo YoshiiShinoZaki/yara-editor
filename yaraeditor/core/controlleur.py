@@ -336,7 +336,7 @@ class Controlleur:
         self.ui_yaraeditor.treeMalwareStrings.setHeaderHidden(True)
         self.ui_yaraeditor.treeMalwareStrings.setObjectName(_fromUtf8("treeMalwareStrings"))
         self.ui_yaraeditor.verticalLayout_7.addWidget(self.ui_yaraeditor.treeMalwareStrings)
-
+        
 
 
     def about(self):

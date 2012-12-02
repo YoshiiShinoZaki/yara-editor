@@ -88,6 +88,13 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Yara Browser</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLineEdit" name="pathYara">
           <property name="maximumSize">
            <size>
@@ -138,6 +145,13 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Malware Browser</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLineEdit" name="pathMalware">
           <property name="maximumSize">
            <size>
@@ -175,7 +189,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_properties">
         <attribute name="title">
