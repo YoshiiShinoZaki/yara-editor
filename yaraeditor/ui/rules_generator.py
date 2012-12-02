@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'rules_generator.ui'
 #
-# Created: Sun Dec  2 10:30:51 2012
+# Created: Sun Dec  2 12:09:53 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,21 +20,6 @@ class Ui_DialogGenerator(object):
         DialogGenerator.resize(728, 507)
         self.verticalLayout = QtGui.QVBoxLayout(DialogGenerator)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.widget_2 = QtGui.QWidget(DialogGenerator)
-        self.widget_2.setObjectName(_fromUtf8("widget_2"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.widget_2)
-        self.horizontalLayout_2.setMargin(0)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.label = QtGui.QLabel(self.widget_2)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.horizontalLayout_2.addWidget(self.label)
-        self.editPathMalware = QtGui.QLineEdit(self.widget_2)
-        self.editPathMalware.setObjectName(_fromUtf8("editPathMalware"))
-        self.horizontalLayout_2.addWidget(self.editPathMalware)
-        self.btnBrowseMalware = QtGui.QToolButton(self.widget_2)
-        self.btnBrowseMalware.setObjectName(_fromUtf8("btnBrowseMalware"))
-        self.horizontalLayout_2.addWidget(self.btnBrowseMalware)
-        self.verticalLayout.addWidget(self.widget_2)
         self.widget = QtGui.QWidget(DialogGenerator)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.horizontalLayout = QtGui.QHBoxLayout(self.widget)
@@ -79,9 +64,9 @@ class Ui_DialogGenerator(object):
         self.label_3 = QtGui.QLabel(self.widget_6)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout_4.addWidget(self.label_3)
-        self.toolButton = QtGui.QToolButton(self.widget_6)
-        self.toolButton.setObjectName(_fromUtf8("toolButton"))
-        self.horizontalLayout_4.addWidget(self.toolButton)
+        self.btnBrowseNewFamily = QtGui.QToolButton(self.widget_6)
+        self.btnBrowseNewFamily.setObjectName(_fromUtf8("btnBrowseNewFamily"))
+        self.horizontalLayout_4.addWidget(self.btnBrowseNewFamily)
         self.verticalLayout_3.addWidget(self.widget_6)
         self.listFilesFamily = QtGui.QListWidget(self.widget_5)
         self.listFilesFamily.setObjectName(_fromUtf8("listFilesFamily"))
@@ -101,10 +86,8 @@ class Ui_DialogGenerator(object):
 
     def retranslateUi(self, DialogGenerator):
         DialogGenerator.setWindowTitle(QtGui.QApplication.translate("DialogGenerator", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("DialogGenerator", "Path Malware :", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnBrowseMalware.setText(QtGui.QApplication.translate("DialogGenerator", "...", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("DialogGenerator", "Compare Malware", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("DialogGenerator", "Other Malware (False positive)", None, QtGui.QApplication.UnicodeUTF8))
         self.btnBrowseNewFile.setText(QtGui.QApplication.translate("DialogGenerator", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("DialogGenerator", "Same Family", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolButton.setText(QtGui.QApplication.translate("DialogGenerator", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnBrowseNewFamily.setText(QtGui.QApplication.translate("DialogGenerator", "...", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -326,8 +326,8 @@ class Controlleur:
                 self.clipboardDataChanged)
 
     def setupPropertiesActions(self):
-        self.ui_yaraeditor.verticalLayout_7 = QtGui.QVBoxLayout(self.ui_yaraeditor.tab_strings)
-        self.ui_yaraeditor.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
+        #self.ui_yaraeditor.verticalLayout_7 = QtGui.QVBoxLayout(self.ui_yaraeditor.tab_strings)
+        #self.ui_yaraeditor.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
         self.ui_yaraeditor.treeMalwareStrings = YTreeWidget(self.ui_yaraeditor.tab_strings)
         self.ui_yaraeditor.treeMalwareStrings.setHeaderHidden(True)
         self.ui_yaraeditor.treeMalwareStrings.setObjectName(_fromUtf8("treeMalwareStrings"))
@@ -638,10 +638,11 @@ class Controlleur:
         self.ui_generator=Ui_DialogGenerator()
         self.ui_generator.setupUi(self.dialog_generator)
 
-        self.app.connect(self.ui_generator.btnBrowseMalware,SIGNAL("clicked()"),self.generator_open_malware)
         self.app.connect(self.ui_generator.btnBrowseNewFile,SIGNAL("clicked()"),self.generator_add_file)
+        self.app.connect(self.ui_generator.btnBrowseNewFamily,SIGNAL("clicked()"),self.generator_add_family)
         self.app.connect(self.ui_generator.listFiles, QtCore.SIGNAL("customContextMenuRequested(const QPoint &)"), self.generator_menuContextTree)
         self.ui_generator.listFiles.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        
 
         if self.dialog_generator.exec_():
             rules = self.generator_generate_rules()
@@ -666,17 +667,6 @@ class Controlleur:
         rules = rules.replace("###CONDITION###","\t(%s)" % " or ".join(set_condition))
         return rules
 
-    def generator_open_malware(self,path=""):
-
-        if path == "":
-            path = QtGui.QFileDialog.getOpenFileName(self.mainwindow, "Open File","","*")
-        if path =="":
-            return 
-
-        self.ui_generator.treeWidget.clear()
-        self.ui_generator.editPathMalware.setText(path)
-        self.generator_update()
-
 
     def generator_add_file(self,path=""): 
         if path == "":
@@ -689,38 +679,66 @@ class Controlleur:
             self.ui_generator.listFiles.addItem(item)
         self.generator_update()            
 
-
-    def generator_update(self):
-        path_malware = self.ui_generator.editPathMalware.text() 
-        self.generator_add_string(path_malware)
-
-        count = self.ui_generator.listFiles.count()
-        for index in range(0,count):
-            item = self.ui_generator.listFiles.item(index)
-            self.generator_remove_string(item.text())
-
-
     def generator_remove_file(self,path=""): 
         items = self.ui_generator.listFiles.selectedItems()
         for item in items:
             index = self.ui_generator.listFiles.row(item)
             self.ui_generator.listFiles.takeItem(index)
         self.generator_update()
-        
+
+    def generator_add_family(self,path=None): 
+        if path == None:
+            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*.*)")
+        else:
+            pathes = path
+
+        if pathes == None:
+            return 
+
+        for path in pathes:
+            item = QtGui.QListWidgetItem(path)
+            self.ui_generator.listFilesFamily.addItem(item)
+        self.generator_update()      
+
+    def generator_update(self):
+
+        self.set_string = dict()
+
+        countFamily = self.ui_generator.listFilesFamily.count()
+        for index in range(0,countFamily):
+            item = self.ui_generator.listFilesFamily.item(index)
+            self.generator_add_string(item.text())
+
+        count = self.ui_generator.listFiles.count()
+        for index in range(0,count):
+            item = self.ui_generator.listFiles.item(index)
+            self.generator_remove_string(item.text())
+
+        self.ui_generator.treeWidget.clear()
+        for s,v in self.set_string.iteritems():
+            if v>=countFamily:
+                self.add_element(self.ui_generator.treeWidget,str(s))
+
+
     def generator_add_string(self,malware):
         f = open(malware,'r')
         data = f.read()
         f.close()
         for s in self.get_strings(data):
-            if '"' not in s and '\\' not in s:
-                self.add_element(self.ui_generator.treeWidget,str(s))
+            if '"' not in s and '\\' not in s and not len(s)>40:
+                if self.set_string.has_key(str(s)):
+                    self.set_string[str(s)] += 1
+                else:
+                    self.set_string[str(s)] = 1
+
 
     def generator_remove_string(self,malware):
         f = open(malware,'r')
         data = f.read()
         f.close()
         for s in self.get_strings(data):
-            self.remove_element(self.ui_generator.treeWidget,str(s))
+            if self.set_string.has_key(str(s)):
+                self.set_string[str(s)] = 0
 
     def generator_menuContextTree(self, point):
         # On définie le menu contextuel.
