@@ -370,7 +370,7 @@ class Controlleur:
             self.add_element(self.treeMalwareProperties,"Name",fileInfo.fileName())
             self.add_element(self.treeMalwareProperties,"Path",fileInfo.filePath())
             self.add_element(self.treeMalwareProperties,"Size",str(fileInfo.size()))
-            fi = open(str(fileInfo.filePath()),'r')
+            fi = open(str(fileInfo.filePath()),'rb')
             data = fi.read()
             fi.close()
             sha1 = QtCore.QCryptographicHash.hash(data,QtCore.QCryptographicHash.Sha1).toHex()  
@@ -721,7 +721,7 @@ class Controlleur:
 
 
     def generator_add_string(self,malware):
-        f = open(malware,'r')
+        f = open(malware,'rb')
         data = f.read()
         f.close()
         for s in self.get_strings(data):
@@ -733,7 +733,7 @@ class Controlleur:
 
 
     def generator_remove_string(self,malware):
-        f = open(malware,'r')
+        f = open(malware,'rb')
         data = f.read()
         f.close()
         for s in self.get_strings(data):

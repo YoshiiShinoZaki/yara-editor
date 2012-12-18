@@ -75,7 +75,9 @@ class app:
             config_file.close()
         except IOError as e:
             make_config_file(config_path)
-
+            config_file = open(config_path, 'r')
+            config.readfp(config_file)
+            config_file.close()
 
 
         translator = QtCore.QTranslator()
