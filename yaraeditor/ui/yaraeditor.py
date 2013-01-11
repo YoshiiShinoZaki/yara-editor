@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Sun Dec  2 12:09:53 2012
+# Created: Fri Jan 11 04:52:36 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,18 +34,6 @@ class Ui_YaraEditor(object):
         self.widgetEditor.setObjectName(_fromUtf8("widgetEditor"))
         self.horizontalLayout.addWidget(self.widgetEditor)
         self.verticalLayout.addWidget(self.MainWidget)
-        self.widgetOutput = QtGui.QWidget(self.centralwidget)
-        self.widgetOutput.setMaximumSize(QtCore.QSize(16777215, 110))
-        self.widgetOutput.setObjectName(_fromUtf8("widgetOutput"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.widgetOutput)
-        self.horizontalLayout_2.setMargin(0)
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.outputEdit = QtGui.QTextEdit(self.widgetOutput)
-        self.outputEdit.setMaximumSize(QtCore.QSize(16777215, 100))
-        self.outputEdit.setReadOnly(True)
-        self.outputEdit.setObjectName(_fromUtf8("outputEdit"))
-        self.horizontalLayout_2.addWidget(self.outputEdit)
-        self.verticalLayout.addWidget(self.widgetOutput)
         YaraEditor.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(YaraEditor)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1117, 25))
@@ -134,6 +122,20 @@ class Ui_YaraEditor(object):
         self.verticalLayout_6.addWidget(self.tabWidget)
         self.dockWidgetInspector.setWidget(self.dockWidgetContents_4)
         YaraEditor.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidgetInspector)
+        self.dockWidget = QtGui.QDockWidget(YaraEditor)
+        self.dockWidget.setObjectName(_fromUtf8("dockWidget"))
+        self.dockWidgetContents_3 = QtGui.QWidget()
+        self.dockWidgetContents_3.setObjectName(_fromUtf8("dockWidgetContents_3"))
+        self.verticalLayout_9 = QtGui.QVBoxLayout(self.dockWidgetContents_3)
+        self.verticalLayout_9.setObjectName(_fromUtf8("verticalLayout_9"))
+        self.outputEdit = QtGui.QTextEdit(self.dockWidgetContents_3)
+        self.outputEdit.setMinimumSize(QtCore.QSize(0, 100))
+        self.outputEdit.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.outputEdit.setReadOnly(True)
+        self.outputEdit.setObjectName(_fromUtf8("outputEdit"))
+        self.verticalLayout_9.addWidget(self.outputEdit)
+        self.dockWidget.setWidget(self.dockWidgetContents_3)
+        YaraEditor.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.dockWidget)
         self.actionNouveau = QtGui.QAction(YaraEditor)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/icon/images/win/filenew.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
