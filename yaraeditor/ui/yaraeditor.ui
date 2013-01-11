@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1117</width>
-    <height>600</height>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,9 @@
   <property name="windowIcon">
    <iconset resource="../../rsrc/yaraeditor.qrc">
     <normaloff>:/logo/images/logo.jpg</normaloff>:/logo/images/logo.jpg</iconset>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -105,6 +108,9 @@
      <height>231</height>
     </size>
    </property>
+   <property name="windowTitle">
+    <string>Malware Browser</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
@@ -119,13 +125,6 @@
         </size>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Malware Browser</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QLineEdit" name="pathMalware">
           <property name="maximumSize">
@@ -156,6 +155,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidgetInspector">
+   <property name="windowTitle">
+    <string>Inspector</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
@@ -164,7 +166,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_properties">
         <attribute name="title">

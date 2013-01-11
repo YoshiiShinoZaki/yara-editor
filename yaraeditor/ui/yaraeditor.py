@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'yaraeditor.ui'
 #
-# Created: Fri Jan 11 04:52:36 2013
+# Created: Fri Jan 11 06:08:49 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,10 +17,11 @@ except AttributeError:
 class Ui_YaraEditor(object):
     def setupUi(self, YaraEditor):
         YaraEditor.setObjectName(_fromUtf8("YaraEditor"))
-        YaraEditor.resize(1117, 600)
+        YaraEditor.resize(1117, 609)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/logo/images/logo.jpg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         YaraEditor.setWindowIcon(icon)
+        YaraEditor.setUnifiedTitleAndToolBarOnMac(True)
         self.centralwidget = QtGui.QWidget(YaraEditor)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -83,9 +84,6 @@ class Ui_YaraEditor(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.widgetMalware)
         self.verticalLayout_3.setMargin(0)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.label_2 = QtGui.QLabel(self.widgetMalware)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.verticalLayout_3.addWidget(self.label_2)
         self.pathMalware = QtGui.QLineEdit(self.widgetMalware)
         self.pathMalware.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.pathMalware.setReadOnly(False)
@@ -147,13 +145,14 @@ class Ui_YaraEditor(object):
         self.actionEnregistrer.setObjectName(_fromUtf8("actionEnregistrer"))
 
         self.retranslateUi(YaraEditor)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(YaraEditor)
 
     def retranslateUi(self, YaraEditor):
         YaraEditor.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "Yara-Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("YaraEditor", "Yara Browser", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("YaraEditor", "Malware Browser", None, QtGui.QApplication.UnicodeUTF8))
+        self.dockWidgetMalware.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "Malware Browser", None, QtGui.QApplication.UnicodeUTF8))
+        self.dockWidgetInspector.setWindowTitle(QtGui.QApplication.translate("YaraEditor", "Inspector", None, QtGui.QApplication.UnicodeUTF8))
         self.treeMalwareProperties.headerItem().setText(0, QtGui.QApplication.translate("YaraEditor", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.treeMalwareProperties.headerItem().setText(1, QtGui.QApplication.translate("YaraEditor", "Value", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_properties), QtGui.QApplication.translate("YaraEditor", "Tab Properties", None, QtGui.QApplication.UnicodeUTF8))
