@@ -8,12 +8,13 @@
 """
 
 
-import os, re, sys
+import os, sys
 import platform
+import subprocess
 
 from distutils.core import setup
 from distutils.cmd import Command
-from distutils.log import error, info, warn
+from distutils.log import info, warn
 
 
 class Uninstall(Command):
@@ -87,10 +88,8 @@ def extract_version():
       else:
 	  print "ERROR: Unable to read the VERSION file."
 
-if len(sys.argv)<1:
-    usage
 
-if sys.argv[1] == "install" and not "--record" in sys.argv:
+if len(sys.argv) > 1 and sys.argv[1] == "install" and not "--record" in sys.argv:
       sys.argv.append("--record")
       sys.argv.append("uninstall.list")
 
