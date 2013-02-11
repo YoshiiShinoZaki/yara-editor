@@ -94,7 +94,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "install" and not "--record" in sys.argv
       sys.argv.append("uninstall.list")
 
 man_dir = 'man' if platform.system() == 'FreeBSD' else 'share/man'
-config_dir = '/etc/' if platform.system() == 'FreeBSD' else '/etc/'
+config_dir = '$HOME/.yara' if platform.system() == 'FreeBSD' else '$HOME/.yara'
 
 data_files = [
         (os.path.join(man_dir, 'fr/man8'), ['man/fr/yara-editor.8']),
