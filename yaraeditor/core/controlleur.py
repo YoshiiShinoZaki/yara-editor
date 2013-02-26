@@ -697,7 +697,7 @@ class Controlleur:
 
     def generator_add_file(self,path=""): 
         if path == "":
-            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*.*)")
+            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*)")
         if pathes == None:
             return 
 
@@ -715,7 +715,7 @@ class Controlleur:
 
     def generator_add_family(self,path=None): 
         if path == None:
-            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*.*)")
+            pathes = QtGui.QFileDialog.getOpenFileNames(self.mainwindow, "Open File","","All (*)")
         else:
             pathes = path
 
