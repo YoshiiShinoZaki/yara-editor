@@ -745,6 +745,7 @@ class Controlleur:
         good = False
         while not good:
             for s,v in self.set_string.iteritems():
+                print s,v
                 if v>=countFamily:
                     self.add_element(self.ui_generator.treeWidget,str(s))
                     good = True
@@ -755,7 +756,11 @@ class Controlleur:
         f = open(malware,'rb')
         data = f.read()
         f.close()
+        strings_in_file = set()
         for s,t in self.get_strings(data):
+            strings_in_file.add(s)
+
+        for s in strings_in_file:
             if '"' not in s and '\\' not in s and not len(s)>40:
                 if self.set_string.has_key(str(s)):
                     self.set_string[str(s)] += 1
